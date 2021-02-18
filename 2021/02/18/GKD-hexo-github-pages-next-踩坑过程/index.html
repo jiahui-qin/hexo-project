@@ -20,17 +20,19 @@
     var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="愿我内心之龙可在天空翱翔">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Dragon Fly in SKY">
-<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/archives/2021/index.html">
+  <meta name="description" content="其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在第一天上班就划水按照教程搞了一遍。  想讲一下总体思路： github pages 可以展示静态页面 hexo 作为一个blog系统可以生成静态页面 next 其实就是一个主题，用来凑数的 Travis CI 来做集成  接下来是正文：  本地环境搭建，生成本地blog  按照hexo需要两个软件：Node.js 和 g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GKD! hexo + github pages + next 踩坑过程">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Dragon Fly in SKY">
-<meta property="og:description" content="愿我内心之龙可在天空翱翔">
+<meta property="og:description" content="其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在第一天上班就划水按照教程搞了一遍。  想讲一下总体思路： github pages 可以展示静态页面 hexo 作为一个blog系统可以生成静态页面 next 其实就是一个主题，用来凑数的 Travis CI 来做集成  接下来是正文：  本地环境搭建，生成本地blog  按照hexo需要两个软件：Node.js 和 g">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-02-18T17:17:24.000Z">
+<meta property="article:modified_time" content="2021-02-18T09:56:44.533Z">
 <meta property="article:author" content="saber qin">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/archives/2021/">
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/">
 
 
 <script id="page-configurations">
@@ -38,12 +40,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Archive | Dragon Fly in SKY</title>
+  <title>GKD! hexo + github pages + next 踩坑过程 | Dragon Fly in SKY</title>
   
 
 
@@ -142,70 +144,147 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 2 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GKD! hexo + github pages + next 踩坑过程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-02-18 17:17:24 / Modified: 09:56:44" itemprop="dateCreated datePublished" datetime="2021-02-18T17:17:24+00:00">2021-02-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
+        <p>其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在第一天上班就划水按照教程搞了一遍。</p>
+<hr>
+<p>想讲一下总体思路：</p>
+<p>github pages 可以展示静态页面</p>
+<p>hexo 作为一个blog系统可以生成静态页面</p>
+<p>next 其实就是一个主题，用来凑数的</p>
+<p>Travis CI 来做集成</p>
+<hr>
+<p>接下来是正文：</p>
+<ol>
+<li><p>本地环境搭建，生成本地blog</p>
+<p> 按照hexo需要两个软件：Node.js 和 git，这两个的安装不在赘述</p>
+<p> 安装hexo：</p>
+<pre><code> npm install -g hexo-cli 
+</code></pre>
+<p> hexo安装完成之后，使用以下命令可以新建一个hexo博客：</p>
+<pre><code> hexo init &lt;floder&gt;
+</code></pre>
+<p> floder为文件夹的名称，也就是新建的博客名，进入到这个文件夹中 <em>_config.yml</em> 是配置文件</p>
+<p> 到了这里本地的blog也就建好了，下一步我们将其迁移至github上</p>
+</li>
+<li><p>迁移至github</p>
+<p> 这里直接讲将站点文件公开的部署方法：</p>
+<ol>
+<li><p>在github上新建一个repository，这个repository的命名按照&lt;项目名&gt;.github.io的形式来命名（大部分人的这里的项目名都是直接用的github的用户名，可以直接用&lt;用户名&gt;.github.io的形式来访问这个博客。）</p>
+</li>
+<li><p>将github上的repository clone至本地（一般建好的情况下会有一个gh-pages的分支有一些example页面文件，先不要管他），在本地新建一个master分支，将本地blog文件夹里的所有文件copy到master分支下。</p>
+</li>
+<li><p>travis CI配置：</p>
+<p> 1). 将<a target="_blank" rel="noopener" href="https://github.com/marketplace/travis-ci">travis CI</a>配置到自己的github账户中</p>
+<p> 2). 打开github的<a target="_blank" rel="noopener" href="https://github.com/settings/installations">应用设置</a>,里边选择travis ci后边的config，将其权限配置为运行访问所有repository</p>
+<p> 3). 在github中新建一个<a target="_blank" rel="noopener" href="https://github.com/settings/tokens">token</a>,并勾选token的 repo 权限， 记录生成的token</p>
+<p> 4). 在<a href="">travis CI</a>的页面，打开刚刚建立好的github项目的配置页面，在environment variables 下新建一个变量，变量名为 <em>GH_TOKEN</em>， 变量值为刚刚github上生成的token， 点击add保存</p>
+</li>
+<li><p>修改travis ci配置</p>
+<p> 在刚刚复制过去的文件夹里，新建一个./.travis.yml文件</p>
+<pre><code> sudo: false
+ language: node_js
+ node_js:
+   - 10 # use nodejs v10 LTS
+ cache: npm
+ branches:
+   only:
+     - master # build master branch only
+ script:
+   - hexo generate # generate static files
+ deploy:
+   provider: pages
+   skip-cleanup: true
+   github-token: $GH_TOKEN
+   keep-history: true
+   on:
+     branch: master
+   local-dir: public
+</code></pre>
+</li>
+<li><p>push master branch</p>
+<p> 到了这一步就基本完成了，将上述文件推送至github上，travis ci就会自动检测到此项目有变化，部署博客文件至gh-pages分支上。</p>
+</li>
+<li><p>访问网站</p>
+<p> 如果项目名是github用户名的话，可以直接访问 https://&lt;你的 GitHub 用户名&gt;.github.io</p>
+<p> 如果不是的话，就访问 https://&lt;你的 GitHub 用户名&gt;.github.io/&lt;项目名&gt;</p>
+</li>
+</ol>
+</li>
+</ol>
+<hr>
+<p>坑：</p>
+<ol>
+<li>如果项目名不是github用户名的话，github还是会访问https://&lt;你的 GitHub 用户名&gt;.github.io 下加载css文件，这个时候需要到 _config.yml 文件下修改url为https://&lt;你的 GitHub 用户名&gt;.github.io/&lt;项目名&gt;，才可以正常读取到css文件。</li>
+</ol>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-02-18T17:17:24+00:00"
-              content="2021-02-18">
-          02-18
-        </time>
-      </div>
+      <footer class="post-footer">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/" itemprop="url">
-            <span itemprop="name">GKD! hexo + github pages + next 踩坑过程</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-02-18T08:05:35+00:00"
-              content="2021-02-18">
-          02-18
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/dragonFlyInSky.GitHub.io/2021/02/18/hello-world/" itemprop="url">
-            <span itemprop="name">Hello World</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
+        
 
 
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/02/18/hello-world/" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-  </div>
+      </footer>
+    
+  </article>
   
   
-  
-
   
 
 

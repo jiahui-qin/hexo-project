@@ -4,8 +4,9 @@ date: 2021-02-18 17:17:24
 tags:
 - github
 - hexo
-categories:
 - blog
+categories:
+- 指南
 ---
 
 其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在年后按照教程搞了一遍。
@@ -58,7 +59,7 @@ Travis CI 来做集成
 
         3). 在github中新建一个[token](https://github.com/settings/tokens),并勾选token的 repo 权限， 记录生成的token
 
-        4). 在[travis CI]()的页面，打开刚刚建立好的github项目的配置页面，在environment variables 下新建一个变量，变量名为 *GH_TOKEN*， 变量值为刚刚github上生成的token， 点击add保存
+        4). 在[travis CI](https://travis-ci.com/)的页面，打开刚刚建立好的github项目的配置页面，在environment variables 下新建一个变量，变量名为 *GH_TOKEN*， 变量值为刚刚github上生成的token， 点击add保存
 
     4. 修改travis ci配置
 

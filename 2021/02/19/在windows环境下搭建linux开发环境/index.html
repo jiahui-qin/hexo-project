@@ -20,22 +20,24 @@
     var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在年后按照教程搞了一遍。  先讲一下总体思路： github pages 可以展示静态页面 hexo 作为一个blog系统可以生成静态页面 next 其实就是一个主题，用来凑数的 Travis CI 来做集成">
+  <meta name="description" content="为什么要这么做呢？ 主要是做go开发的时候发现要修改telegram之类的插件都是在linux系统下开发编译比较方便，然而我手头又没有linux机器，只好考虑在本机上搭建这么一套环境了。 其实这是一篇早就写好的文章，之前发表在了我的CSDN上，还是搬运了过来，以下是正文">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GKD! hexo + github pages + next 踩坑过程">
-<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:title" content="在windows环境下搭建linux+gvm开发环境">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/19/%E5%9C%A8windows%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%90%AD%E5%BB%BAlinux%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/index.html">
 <meta property="og:site_name" content="Dragon Fly in SKY">
-<meta property="og:description" content="其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在年后按照教程搞了一遍。  先讲一下总体思路： github pages 可以展示静态页面 hexo 作为一个blog系统可以生成静态页面 next 其实就是一个主题，用来凑数的 Travis CI 来做集成">
+<meta property="og:description" content="为什么要这么做呢？ 主要是做go开发的时候发现要修改telegram之类的插件都是在linux系统下开发编译比较方便，然而我手头又没有linux机器，只好考虑在本机上搭建这么一套环境了。 其实这是一篇早就写好的文章，之前发表在了我的CSDN上，还是搬运了过来，以下是正文">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-18T17:17:24.000Z">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20210108161709483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzUzNzI4OQ==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2021-02-19T16:38:50.000Z">
 <meta property="article:modified_time" content="2021-02-19T08:46:18.449Z">
 <meta property="article:author" content="saber qin">
-<meta property="article:tag" content="github">
-<meta property="article:tag" content="hexo">
-<meta property="article:tag" content="blog">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="wsl2">
+<meta property="article:tag" content="Ubuntu">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20210108161709483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzUzNzI4OQ==,size_16,color_FFFFFF,t_70">
 
-<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/">
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/19/%E5%9C%A8windows%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%90%AD%E5%BB%BAlinux%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">
 
 
 <script id="page-configurations">
@@ -48,7 +50,7 @@
   };
 </script>
 
-  <title>GKD! hexo + github pages + next 踩坑过程 | Dragon Fly in SKY</title>
+  <title>在windows环境下搭建linux+gvm开发环境 | Dragon Fly in SKY</title>
   
 
 
@@ -169,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/19/%E5%9C%A8windows%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%90%AD%E5%BB%BAlinux%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
@@ -182,7 +184,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          GKD! hexo + github pages + next 踩坑过程
+          在windows环境下搭建linux+gvm开发环境
         </h1>
 
         <div class="post-meta">
@@ -191,16 +193,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-02-18 17:17:24" itemprop="dateCreated datePublished" datetime="2021-02-18T17:17:24+00:00">2021-02-18</time>
+              <time title="创建时间：2021-02-19 16:38:50 / 修改时间：08:46:18" itemprop="dateCreated datePublished" datetime="2021-02-19T16:38:50+00:00">2021-02-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-19 08:46:18" itemprop="dateModified" datetime="2021-02-19T08:46:18+00:00">2021-02-19</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -222,96 +218,68 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在年后按照教程搞了一遍。</p>
-<hr>
-<p>先讲一下总体思路：</p>
-<p>github pages 可以展示静态页面</p>
-<p>hexo 作为一个blog系统可以生成静态页面</p>
-<p>next 其实就是一个主题，用来凑数的</p>
-<p>Travis CI 来做集成</p>
+        <p>为什么要这么做呢？</p>
+<p>主要是做go开发的时候发现要修改telegram之类的插件都是在linux系统下开发编译比较方便，然而我手头又没有linux机器，只好考虑在本机上搭建这么一套环境了。</p>
+<p>其实这是一篇早就写好的文章，之前发表在了我的CSDN上，还是搬运了过来，以下是正文</p>
 <a id="more"></a>
 <hr>
-<p>接下来是正文：</p>
+<h2 id="安装ubuntu16-04"><a href="#安装ubuntu16-04" class="headerlink" title="安装ubuntu16.04"></a>安装ubuntu16.04</h2><p>这个没啥好说的，参考微软的文档绝对没问题</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/wsl/install-win10">https://docs.microsoft.com/zh-cn/windows/wsl/install-win10</a></p>
+<p>最简单的方法还是直接加入开发者计划，升级一下系统，一行命令就搞定</p>
+<h2 id="ubuntu设置"><a href="#ubuntu设置" class="headerlink" title="ubuntu设置"></a>ubuntu设置</h2><p>Ubuntu安装好之后还是要做一些设置的：</p>
 <ol>
-<li><p>本地环境搭建，生成本地blog</p>
-<p> 按照hexo需要两个软件：Node.js 和 git，这两个的安装不在赘述</p>
-<p> 安装hexo：</p>
-<pre><code> npm install -g hexo-cli 
-</code></pre>
-<p> hexo安装完成之后，使用以下命令可以新建一个hexo博客：</p>
-<pre><code> hexo init &lt;floder&gt;
-</code></pre>
-<p> floder为文件夹的名称，也就是新建的博客名，进入到这个文件夹中 <em>_config.yml</em> 是配置文件</p>
-<p> 到了这里本地的blog也就建好了，下一步我们将其迁移至github上</p>
+<li><p>设置登陆账号密码 </p>
 </li>
-<li><p>迁移至github</p>
-<p> 这里直接讲将站点文件公开的部署方法：</p>
-<ol>
-<li><p>在github上新建一个repository，这个repository的命名按照&lt;项目名&gt;.github.io的形式来命名（大部分人的这里的项目名都是直接用的github的用户名，可以直接用&lt;用户名&gt;.github.io的形式来访问这个博客。）</p>
-</li>
-<li><p>将github上的repository clone至本地（一般建好的情况下会有一个gh-pages的分支有一些example页面文件，先不要管他），在本地新建一个master分支，将本地blog文件夹里的所有文件copy到master分支下。</p>
-</li>
-<li><p>travis CI配置：</p>
-<p> 1). 将<a target="_blank" rel="noopener" href="https://github.com/marketplace/travis-ci">travis CI</a>配置到自己的github账户中</p>
-<p> 2). 打开github的<a target="_blank" rel="noopener" href="https://github.com/settings/installations">应用设置</a>,里边选择travis ci后边的config，将其权限配置为运行访问所有repository</p>
-<p> 3). 在github中新建一个<a target="_blank" rel="noopener" href="https://github.com/settings/tokens">token</a>,并勾选token的 repo 权限， 记录生成的token</p>
-<p> 4). 在<a target="_blank" rel="noopener" href="https://travis-ci.com/">travis CI</a>的页面，打开刚刚建立好的github项目的配置页面，在environment variables 下新建一个变量，变量名为 <em>GH_TOKEN</em>， 变量值为刚刚github上生成的token， 点击add保存</p>
-</li>
-<li><p>修改travis ci配置</p>
-<p> 在刚刚复制过去的文件夹里，新建一个./.travis.yml文件</p>
-<pre><code> sudo: false
- language: node_js
- node_js:
-   - 10 # use nodejs v10 LTS
- cache: npm
- branches:
-   only:
-     - master # build master branch only
- script:
-   - hexo generate # generate static files
- deploy:
-   provider: pages
-   skip-cleanup: true
-   github-token: $GH_TOKEN
-   keep-history: true
-   on:
-     branch: master
-   local-dir: public
+<li><p>权限提升，其实可以直接用root来登录，要设置root的密码</p>
+<pre><code> sudo passwd root
 </code></pre>
 </li>
-<li><p>push master branch</p>
-<p> 到了这一步就基本完成了，将上述文件推送至github上，travis ci就会自动检测到此项目有变化，部署博客文件至gh-pages分支上。</p>
-</li>
-<li><p>访问网站</p>
-<p> 如果项目名是github用户名的话，可以直接访问 https://&lt;你的 GitHub 用户名&gt;.github.io</p>
-<p> 如果不是的话，就访问 https://&lt;你的 GitHub 用户名&gt;.github.io/&lt;项目名&gt;</p>
-</li>
-</ol>
-</li>
-</ol>
-<hr>
-<p>坑：</p>
-<ol>
-<li><p>如果项目名不是github用户名的话，github还是会访问https://&lt;你的 GitHub 用户名&gt;.github.io 下加载css文件，这个时候需要到 _config.yml 文件下修改url为https://&lt;你的 GitHub 用户名&gt;.github.io/&lt;项目名&gt;,以及修改root为/&lt;项目名&gt;/，才可以正常读取到css文件。</p>
-<p> 比如我的URL设置就是如下：</p>
-<pre><code> # URL
- ## If your site is put in a subdirectory, set url as &#39;http://example.com/   child&#39;     and root as &#39;/child/&#39;
- url: https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/
- root: /dragonFlyInSky.GitHub.io/
- permalink: :year/:month/:day/:title/
- permalink_defaults:
- pretty_urls:
-   trailing_index: true # Set to false to remove trailing &#39;index.html&#39;     from    permalinks
-   trailing_html: true # Set to false to remove trailing &#39;.html&#39; from    permalinks
+<li><p>升级apt-get，需要换源的可以参考这个<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39394526/article/details/87935449">帖子</a></p>
+<pre><code> apt-get update
 </code></pre>
 </li>
 </ol>
-<hr>
-<p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">hexo官方文档</a></p>
-<hr>
-<p>ps</p>
-<p>写完之后才发现这样的教程也太多了。</p>
+<h2 id="安装GVM"><a href="#安装GVM" class="headerlink" title="安装GVM"></a>安装GVM</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/or2-/p/4160814.html">在ubuntu上安装GVM</a></p>
+<pre><code>//安装gvm的必要软件
+sudo apt-get install curl git mercurial make binutils bison gcc build-essential　
+//使用bash安装GVM
+bash &lt; &lt;(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+</code></pre>
+<p>如果这个时候报了403错误，则按照下列操作</p>
+<pre><code>sudo vim /etc/hosts
+//在文件中加下边一句
+199.232.28.133 raw.githubusercontent.com
+</code></pre>
+<p>如果报了这个错误：</p>
+<pre><code>curl: (35) gnutls_handshake() failed: Error in the pull function.
+</code></pre>
+<p>就按照这个<a target="_blank" rel="noopener" href="https://blog.csdn.net/anlian523/article/details/90729063">帖子</a>操作一下</p>
+<h2 id="安装GO"><a href="#安装GO" class="headerlink" title="安装GO"></a>安装GO</h2><p>通过GVM来安装go，如果要安装1.13等高版本，需要首先安装1.4版本的go</p>
+<p>那么就先安装1.4，再安装1.13：</p>
+<pre><code>gvm install go1.4
+gvm use go1.4
+gvm install go1.13
+</code></pre>
+<p>安装1.4的是时候如果有报错：</p>
+<pre><code>Downloading Go source...
+Installing go1.4...
+ * Compiling...
+/root/.gvm/scripts/install: line 84: go: command not found
+ERROR: Failed to compile. Check the logs at /root/.gvm/logs/go-go1.4-compile.log
+ERROR: Failed to use installed version
+</code></pre>
+<p>那么就设置环境变量不使能cgo，主要参考的是这篇<a target="_blank" rel="noopener" href="https://blog.csdn.net/zoumy3/article/details/78440880?utm_medium=distribute.pc_relevant.none-task-blog-searchFromBaidu-3.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-searchFromBaidu-3.not_use_machine_learn_pai">文章</a>，一般就可以解决，接下来继续安装go1.13：</p>
+<pre><code>export  CGO_ENABLED=0
+</code></pre>
+<p>如果报这个错：<br><img src="https://img-blog.csdnimg.cn/20210108161709483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzUzNzI4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>就换成如下安装命令：</p>
+<pre><code>gvm install go1.4 -B
+</code></pre>
+<h2 id="GO设置"><a href="#GO设置" class="headerlink" title="GO设置"></a>GO设置</h2><p>go代理主要参考的是这一篇文章：</p>
+<p><a target="_blank" rel="noopener" href="https://www.sunzhongwei.com/problem-of-domestic-go-get-unable-to-download?from=sidebar_new">goproxy 代理设置</a></p>
+<pre><code>go env -w GO111MODULE=on
+go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
+</code></pre>
+<h2 id="其他参考："><a href="#其他参考：" class="headerlink" title="其他参考："></a>其他参考：</h2><p><a target="_blank" rel="noopener" href="https://travis-ci.org/github/monochromegane/the_platinum_searcher/jobs/30478610">gvm更新以及安装go</a></p>
 
     </div>
 
@@ -321,9 +289,9 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/dragonFlyInSky.GitHub.io/tags/github/" rel="tag"># github</a>
-              <a href="/dragonFlyInSky.GitHub.io/tags/hexo/" rel="tag"># hexo</a>
-              <a href="/dragonFlyInSky.GitHub.io/tags/blog/" rel="tag"># blog</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/Windows/" rel="tag"># Windows</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/wsl2/" rel="tag"># wsl2</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/Ubuntu/" rel="tag"># Ubuntu</a>
           </div>
 
         
@@ -331,11 +299,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/02/19/%E5%9C%A8windows%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%90%AD%E5%BB%BAlinux%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" rel="next" title="在windows环境下搭建linux+gvm开发环境">
-      在windows环境下搭建linux+gvm开发环境 <i class="fa fa-chevron-right"></i>
+    <a href="/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/" rel="prev" title="GKD! hexo + github pages + next 踩坑过程">
+      <i class="fa fa-chevron-left"></i> GKD! hexo + github pages + next 踩坑过程
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -394,6 +362,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85ubuntu16-04"><span class="nav-number">1.</span> <span class="nav-text">安装ubuntu16.04</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ubuntu%E8%AE%BE%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">ubuntu设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85GVM"><span class="nav-number">3.</span> <span class="nav-text">安装GVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85GO"><span class="nav-number">4.</span> <span class="nav-text">安装GO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GO%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">GO设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">其他参考：</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

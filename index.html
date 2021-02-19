@@ -131,6 +131,11 @@
     <a href="/dragonFlyInSky.GitHub.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
 
   </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/dragonFlyInSky.GitHub.io/plan/" rel="section"><i class="fa fa-calendar fa-fw"></i>plan</a>
+
+  </li>
   </ul>
 </nav>
 
@@ -189,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-02-19 07:34:59" itemprop="dateModified" datetime="2021-02-19T07:34:59+00:00">2021-02-19</time>
+                <time title="Modified: 2021-02-19 08:19:57" itemprop="dateModified" datetime="2021-02-19T08:19:57+00:00">2021-02-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -219,89 +224,14 @@
 <p>hexo 作为一个blog系统可以生成静态页面</p>
 <p>next 其实就是一个主题，用来凑数的</p>
 <p>Travis CI 来做集成</p>
-<hr>
-<p>接下来是正文：</p>
-<ol>
-<li><p>本地环境搭建，生成本地blog</p>
-<p> 按照hexo需要两个软件：Node.js 和 git，这两个的安装不在赘述</p>
-<p> 安装hexo：</p>
-<pre><code> npm install -g hexo-cli 
-</code></pre>
-<p> hexo安装完成之后，使用以下命令可以新建一个hexo博客：</p>
-<pre><code> hexo init &lt;floder&gt;
-</code></pre>
-<p> floder为文件夹的名称，也就是新建的博客名，进入到这个文件夹中 <em>_config.yml</em> 是配置文件</p>
-<p> 到了这里本地的blog也就建好了，下一步我们将其迁移至github上</p>
-</li>
-<li><p>迁移至github</p>
-<p> 这里直接讲将站点文件公开的部署方法：</p>
-<ol>
-<li><p>在github上新建一个repository，这个repository的命名按照&lt;项目名&gt;.github.io的形式来命名（大部分人的这里的项目名都是直接用的github的用户名，可以直接用&lt;用户名&gt;.github.io的形式来访问这个博客。）</p>
-</li>
-<li><p>将github上的repository clone至本地（一般建好的情况下会有一个gh-pages的分支有一些example页面文件，先不要管他），在本地新建一个master分支，将本地blog文件夹里的所有文件copy到master分支下。</p>
-</li>
-<li><p>travis CI配置：</p>
-<p> 1). 将<a target="_blank" rel="noopener" href="https://github.com/marketplace/travis-ci">travis CI</a>配置到自己的github账户中</p>
-<p> 2). 打开github的<a target="_blank" rel="noopener" href="https://github.com/settings/installations">应用设置</a>,里边选择travis ci后边的config，将其权限配置为运行访问所有repository</p>
-<p> 3). 在github中新建一个<a target="_blank" rel="noopener" href="https://github.com/settings/tokens">token</a>,并勾选token的 repo 权限， 记录生成的token</p>
-<p> 4). 在<a href="">travis CI</a>的页面，打开刚刚建立好的github项目的配置页面，在environment variables 下新建一个变量，变量名为 <em>GH_TOKEN</em>， 变量值为刚刚github上生成的token， 点击add保存</p>
-</li>
-<li><p>修改travis ci配置</p>
-<p> 在刚刚复制过去的文件夹里，新建一个./.travis.yml文件</p>
-<pre><code> sudo: false
- language: node_js
- node_js:
-   - 10 # use nodejs v10 LTS
- cache: npm
- branches:
-   only:
-     - master # build master branch only
- script:
-   - hexo generate # generate static files
- deploy:
-   provider: pages
-   skip-cleanup: true
-   github-token: $GH_TOKEN
-   keep-history: true
-   on:
-     branch: master
-   local-dir: public
-</code></pre>
-</li>
-<li><p>push master branch</p>
-<p> 到了这一步就基本完成了，将上述文件推送至github上，travis ci就会自动检测到此项目有变化，部署博客文件至gh-pages分支上。</p>
-</li>
-<li><p>访问网站</p>
-<p> 如果项目名是github用户名的话，可以直接访问 https://&lt;你的 GitHub 用户名&gt;.github.io</p>
-<p> 如果不是的话，就访问 https://&lt;你的 GitHub 用户名&gt;.github.io/&lt;项目名&gt;</p>
-</li>
-</ol>
-</li>
-</ol>
-<hr>
-<p>坑：</p>
-<ol>
-<li><p>如果项目名不是github用户名的话，github还是会访问https://&lt;你的 GitHub 用户名&gt;.github.io 下加载css文件，这个时候需要到 _config.yml 文件下修改url为https://&lt;你的 GitHub 用户名&gt;.github.io/&lt;项目名&gt;,以及修改root为/&lt;项目名&gt;/，才可以正常读取到css文件。</p>
-<p> 比如我的URL设置就是如下：</p>
-<pre><code> # URL
- ## If your site is put in a subdirectory, set url as &#39;http://example.com/   child&#39;     and root as &#39;/child/&#39;
- url: https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/
- root: /dragonFlyInSky.GitHub.io/
- permalink: :year/:month/:day/:title/
- permalink_defaults:
- pretty_urls:
-   trailing_index: true # Set to false to remove trailing &#39;index.html&#39;     from    permalinks
-   trailing_html: true # Set to false to remove trailing &#39;.html&#39; from    permalinks
-</code></pre>
-</li>
-</ol>
-<hr>
-<p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">hexo官方文档</a></p>
-<hr>
-<p>ps</p>
-<p>写完之后才发现这样的教程也太多了。</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/02/18/GKD-hexo-github-pages-next-%E8%B8%A9%E5%9D%91%E8%BF%87%E7%A8%8B/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

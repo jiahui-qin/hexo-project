@@ -2,7 +2,10 @@
 title: go中...语法糖的应用
 date: 2021-02-19 18:04:57
 tags:
+- go
+- 语法糖
 categories:
+- go初学者教程
 ---
 
 今天第一次用go刷leetcode，看到有这么一句：

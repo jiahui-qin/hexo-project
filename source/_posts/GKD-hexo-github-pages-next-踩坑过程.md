@@ -2,6 +2,10 @@
 title: GKD! hexo + github pages + next 踩坑过程
 date: 2021-02-18 17:17:24
 tags:
+- github
+- hexo
+categories:
+- blog
 ---
 
 其实在年前就试着想搞这么一套个人blog，然而年前只想着放假并没有开搞，于是在第一天上班就划水按照教程搞了一遍。
@@ -91,4 +95,24 @@ Travis CI 来做集成
 
 坑：
 
-1. 如果项目名不是github用户名的话，github还是会访问https://<你的 GitHub 用户名>.github.io 下加载css文件，这个时候需要到 _config.yml 文件下修改url为https://<你的 GitHub 用户名>.github.io/<项目名>，才可以正常读取到css文件。
+1. 如果项目名不是github用户名的话，github还是会访问https://<你的 GitHub 用户名>.github.io 下加载css文件，这个时候需要到 _config.yml 文件下修改url为https://<你的 GitHub 用户名>.github.io/<项目名>,以及修改root为/<项目名>/，才可以正常读取到css文件。
+
+    比如我的URL设置就是如下：
+
+        # URL
+        ## If your site is put in a subdirectory, set url as 'http://example.com/   child'     and root as '/child/'
+        url: https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/
+        root: /dragonFlyInSky.GitHub.io/
+        permalink: :year/:month/:day/:title/
+        permalink_defaults:
+        pretty_urls:
+          trailing_index: true # Set to false to remove trailing 'index.html'     from    permalinks
+          trailing_html: true # Set to false to remove trailing '.html' from    permalinks
+
+
+----
+
+参考：
+
+[hexo官方文档](https://hexo.io/zh-cn/docs/)
+

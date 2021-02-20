@@ -17,6 +17,8 @@ telegraf [github](https://github.com/influxdata/telegraf) 地址
 
 有一个[input.exec](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/exec)插件，可以获取命令执行后的结果，取到这个结果然后结合一下telegraf允许输入的格式，就可以了。无奈我写bash的水平实在是太低了，刚开始的时候也没有发现这个东西，所以就没有管这个，直接上手撸了个插件
 
+<!--more-->
+
 # how write a input plugin
 先看一下[官方教程](https://github.com/influxdata/telegraf/blob/master/docs/INPUTS.md)吧
 

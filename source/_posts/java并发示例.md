@@ -18,6 +18,8 @@ categories:
 
 原博的example里边对循环和并行的效率做了对比
 
+<!--more-->
+
 callable线程类
 
 ````java

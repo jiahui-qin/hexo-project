@@ -33,4 +33,40 @@ Jsch是一个纯java写的ssh客户端，通过Jsch可以完全通过java来实�
 
 ### 获取ssh的输出
 
-对channel有一个getInputStream的方法，可以获取的输出信息流，输出的类型是OutPutStream
+对channel有一个getInputStream的方法，可以获取到输入信息流，输出的类型是InputStream。当前的代码是这样的：
+
+````go
+InputStream inputStream = chn.getInputStream();
+        try {
+            //循环读取
+            byte[] buffer = new byte[1024];
+            int i = 0;
+            //如果没有数据来，线程会一直阻塞在这个地方等待数据。
+            while ((i = inputStream.read(buffer)) != -1) {
+                System.out.println("got data!");
+                //TODO: 将获取的代码转化为字符串
+            }
+
+        } finally {
+            //断开连接后关闭会话
+            deviceConn.close();
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+````
+在这里实际上每次有输入的时候，都会看到got data，但是怎么把输入流转为string做解析我还在研究怎么做···
+
+这个[文章](https://www.baeldung.com/convert-input-stream-to-string)总结了一下如何把inputStream转化为string，但是我试了几个并不好用，最后用下列代码解决了输入流转string的问题：
+
+````go
+byte[] buffer = new byte[1024];
+int i = 0;
+//如果没有数据来，线程会一直阻塞在这个地方等待数据。
+while ((i = inputStream.read(buffer)) != -1) {
+    TextMessage textMessage = new TextMessage(buffer);
+    System.out.println(textMessage.getPayload());
+}
+````
+
+当然为什么这个ok也是一个坑···具体的怎么用以后慢慢填坑吧···

@@ -37,23 +37,22 @@ Jsch是一个纯java写的ssh客户端，通过Jsch可以完全通过java来实�
 
 ````go
 InputStream inputStream = chn.getInputStream();
-        try {
-            //循环读取
-            byte[] buffer = new byte[1024];
-            int i = 0;
-            //如果没有数据来，线程会一直阻塞在这个地方等待数据。
-            while ((i = inputStream.read(buffer)) != -1) {
-                System.out.println("got data!");
-                //TODO: 将获取的代码转化为字符串
-            }
-
-        } finally {
-            //断开连接后关闭会话
-            deviceConn.close();
-            if (inputStream != null) {
-                inputStream.close();
-            }
+    try {
+        //循环读取
+        byte[] buffer = new byte[1024];
+        int i = 0;
+        //如果没有数据来，线程会一直阻塞在这个地方等待数据。
+        while ((i = inputStream.read(buffer)) != -1) {
+            System.out.println("got data!");
+            //TODO: 将获取的代码转化为字符串
         }
+    } finally {
+        //断开连接后关闭会话
+        deviceConn.close();
+        if (inputStream != null) {
+            inputStream.close();
+        }
+    }
 ````
 在这里实际上每次有输入的时候，都会看到got data，但是怎么把输入流转为string做解析我还在研究怎么做···
 

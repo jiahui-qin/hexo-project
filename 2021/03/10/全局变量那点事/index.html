@@ -20,21 +20,20 @@
     var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="既然标题是并发，先看看什么是并发： 多线程程序在单核心的CPU上运行是并发， 多线程程序在多核心CPU上运行是并行 并发是如何实现的呢？ 依靠的是CPU的时间分片来完成的。 什么是进程、线程、协程呢？ 进程是程序的一次执行过程">
+  <meta name="description" content="为什么想要开这篇文章呢？因为在写代码的时候，发现一个很诡异的问题： 有一个list想要插入数据库，在插入之前都会清空一遍数据库。但是每次插入完之后都发现好像清空数据库失败了。代码大概如下：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="go并发基础知识">
-<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/20/go%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:title" content="java变量那点事">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/03/10/%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E9%82%A3%E7%82%B9%E4%BA%8B/index.html">
 <meta property="og:site_name" content="Dragon Fly in SKY">
-<meta property="og:description" content="既然标题是并发，先看看什么是并发： 多线程程序在单核心的CPU上运行是并发， 多线程程序在多核心CPU上运行是并行 并发是如何实现的呢？ 依靠的是CPU的时间分片来完成的。 什么是进程、线程、协程呢？ 进程是程序的一次执行过程">
+<meta property="og:description" content="为什么想要开这篇文章呢？因为在写代码的时候，发现一个很诡异的问题： 有一个list想要插入数据库，在插入之前都会清空一遍数据库。但是每次插入完之后都发现好像清空数据库失败了。代码大概如下：">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-20T11:21:49.000Z">
+<meta property="article:published_time" content="2021-03-10T18:55:40.000Z">
 <meta property="article:modified_time" content="2021-03-11T04:04:33.269Z">
 <meta property="article:author" content="saber qin">
-<meta property="article:tag" content="go">
-<meta property="article:tag" content="并发">
+<meta property="article:tag" content="java">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/20/go%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/03/10/%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E9%82%A3%E7%82%B9%E4%BA%8B/">
 
 
 <script id="page-configurations">
@@ -47,7 +46,7 @@
   };
 </script>
 
-  <title>go并发基础知识 | Dragon Fly in SKY</title>
+  <title>java变量那点事 | Dragon Fly in SKY</title>
   
 
 
@@ -168,7 +167,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/20/go%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/03/10/%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E9%82%A3%E7%82%B9%E4%BA%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
@@ -181,7 +180,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          go并发基础知识
+          java变量那点事
         </h1>
 
         <div class="post-meta">
@@ -191,7 +190,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-20 11:21:49" itemprop="dateCreated datePublished" datetime="2021-02-20T11:21:49+00:00">2021-02-20</time>
+              <time title="创建时间：2021-03-10 18:55:40" itemprop="dateCreated datePublished" datetime="2021-03-10T18:55:40+00:00">2021-03-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -206,7 +205,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/go%E5%88%9D%E5%AD%A6%E8%80%85%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">go初学者教程</span></a>
+                  <a href="/dragonFlyInSky.GitHub.io/categories/java%E5%88%9D%E5%AD%A6%E8%80%85%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">java初学者教程</span></a>
                 </span>
             </span>
 
@@ -221,26 +220,51 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>既然标题是并发，先看看什么是并发：</p>
-<p><strong>多线程程序在单核心的CPU上运行是并发</strong>， 多线程程序在多核心CPU上运行是并行</p>
-<p>并发是如何实现的呢？ 依靠的是CPU的时间分片来完成的。</p>
-<p>什么是进程、线程、协程呢？</p>
-<p>进程是程序的一次执行过程</p>
+        <p>为什么想要开这篇文章呢？因为在写代码的时候，发现一个很诡异的问题：</p>
+<p>有一个list想要插入数据库，在插入之前都会清空一遍数据库。但是每次插入完之后都发现好像清空数据库失败了。代码大概如下：</p>
 <a id="more"></a>
 
-<p>线程是进程的一个执行实体，是CPU调度和分派的基本单位。一个进程可以创建和撤销多个线程。</p>
-<p>协程： 独立的栈空间，共享堆空间，调度由用户自己控制。类似用户级线程。协程是轻量级的线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestImpl</span> </span>&#123;</span><br><span class="line">    List&lt;Link&gt; linkInfo = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Map&lt;String,Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;someAttr&quot;</span>, attr);</span><br><span class="line">        linkMapper.deleteByMap(map);</span><br><span class="line">        linkInfo = getInfo();</span><br><span class="line">        linkService.saveBatch(linkInfo)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查了很多次都没有发现问题，断点执行后发现：每次linkInfo的长度都变得很长，就从最开始发现：每次linkInfo都带着上次执行之后的结果，append了现在的结果。</p>
+<p>这本来应该是个很简单的错误，我却看了很久，还是基础知识太薄弱了啊。</p>
+<h2 id="java中的变量类型"><a href="#java中的变量类型" class="headerlink" title="java中的变量类型"></a>java中的变量类型</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Variable</span></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> allClicks=<span class="number">0</span>;    <span class="comment">// 类变量</span></span><br><span class="line">    String str=<span class="string">&quot;hello world&quot;</span>;  <span class="comment">// 实例变量</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i =<span class="number">0</span>;  <span class="comment">// 局部变量</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="实例变量"><a href="#实例变量" class="headerlink" title="实例变量"></a>实例变量</h3><p>上边的例子中显然linkInfo是一个实例变量，实例变量的特点有以下：</p>
+<ul>
+<li>实例变量声明在一个类中，但在方法、构造方法和语句块之外；</li>
+<li>当一个对象被实例化之后，每个实例变量的值就跟着确定；</li>
+<li>实例变量在对象创建的时候创建，在对象被销毁的时候销毁；</li>
+<li>实例变量的值应该至少被一个方法、构造方法或者语句块引用，使得外部能够通过这些方式获取实例变量信息；</li>
+<li>实例变量可以声明在使用前或者使用后；</li>
+<li>访问修饰符可以修饰实例变量；</li>
+<li>实例变量对于类中的方法、构造方法或者语句块是可见的。一般情况下应该把实例变量设为私* 有。通过使用访问修饰符可以使实例变量对子类可见；</li>
+<li>实例变量具有默认值。数值型变量的默认值是0，布尔型变量的默认值是false，引用类型变量的默认值是null。变量的值可以在声明时指定，也可以在构造方法中指定；</li>
+<li>实例变量可以直接通过变量名访问。但在静态方法以及其他类中，就应该使用完全限定名：ObejectReference.VariableName。</li>
+</ul>
+<p>这里主要关注一下第二、第三条：在springboot项目起来之后，这个对象就已经被实例化了，每次调用main方法，实际上linkInfo里边都包含上一次get到的值。所以实际要用的话每次调用main方法，都要置空linkInfo。</p>
+<p>其他的话，访问修饰符其实就是public, private, protect这些。还有一个<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ChrisMurphy/p/4825906.html">应用类型变量</a>,这个也要看文章了解一下。</p>
+<h3 id="类变量"><a href="#类变量" class="headerlink" title="类变量"></a>类变量</h3><ul>
+<li>类变量也称为静态变量，在类中以 static 关键字声明，但必须在方法之外。</li>
+<li>无论一个类创建了多少个对象，类只拥有类变量的一份拷贝。</li>
+<li>静态变量除了被声明为常量外很少使用，静态变量是指声明为 public/private，final 和 static 类型的变量。静态变量初始化后不可改变。</li>
+<li>静态变量储存在静态存储区。经常被声明为常量，很少单独使用 static 声明变量。</li>
+<li>静态变量在第一次被访问时创建，在程序结束时销毁。</li>
+<li>与实例变量具有相似的可见性。但为了对类的使用者可见，大多数静态变量声明为 public 类型。</li>
+<li>默认值和实例变量相似。数值型变量默认值是 0，布尔型默认值是 false，引用类型默认值是 null。变量的值可以在声明的时候指定，也可以在构造方法中指定。此外，静态变量还可以在静态语句块中初始化。</li>
+<li>静态变量可以通过：ClassName.VariableName的方式访问。</li>
+<li>类变量被声明为 public static final 类型时，类变量名称一般建议使用大写字母。如果静态变量不是 public 和 final 类型，其命名方式与实例变量以及局部变量的命名方式一致。</li>
+</ul>
+<p>理解为静态变量可能会更好理解，总之就是作为常量使用，初始化之后不可改变</p>
+<h3 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h3><ul>
+<li>局部变量声明在方法、构造方法或者语句块中；</li>
+<li>局部变量在方法、构造方法、或者语句块被执行的时候创建，当它们执行完成后，变量将会被销毁；</li>
+<li>访问修饰符不能用于局部变量；</li>
+<li>局部变量只在声明它的方法、构造方法或者语句块中可见；</li>
+<li>局部变量是在栈上分配的。</li>
+<li>局部变量没有默认值，所以局部变量被声明后，必须经过初始化，才可以使用。</li>
+</ul>
+<p>局部变量就是在函数中使用的变量，大概是使用最广泛的。</p>
 <hr>
-<p>go并发设计的核心是 <strong>goroutine</strong></p>
-<p>使用go关键词可以创建goroutine，将go声明放在一个函数前，运行这个函数，就会作为一个并发的独立线程。</p>
-<p>以下是三种用法：一个方法、匿名方法、直接写一个代码块</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//go 关键字放在方法调用前新建一个 goroutine 并执行方法体</span></span><br><span class="line"><span class="keyword">go</span> GetThingDone(param1, param2);</span><br><span class="line"></span><br><span class="line"><span class="comment">//新建一个匿名方法并执行</span></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(param1, param2)</span></span> &#123;</span><br><span class="line">&#125;(val1, val2)</span><br><span class="line"></span><br><span class="line"><span class="comment">//直接新建一个 goroutine 并在 goroutine 中执行代码块</span></span><br><span class="line"><span class="keyword">go</span> &#123;</span><br><span class="line">    <span class="comment">//do someting...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>进程间的通信可以使用channel，使用make离开创建channel</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ci := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">cs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">cf := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">interface</span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>有一点没有搞明白：</p>
-<p>java可以先创建多个线程，再一起执行，在go里边怎么创建多个线程再一起执行呢？</p>
-<p>要通过channel拿结果的话就要一直等待这个线程执行完毕，那要如何实现呢？</p>
+<p>编码过程中感觉基础真的挺重要，自己的java基础确实比较差，还要多学习··</p>
 
     </div>
 
@@ -250,8 +274,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/dragonFlyInSky.GitHub.io/tags/go/" rel="tag"># go</a>
-              <a href="/dragonFlyInSky.GitHub.io/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/java/" rel="tag"># java</a>
           </div>
 
         
@@ -260,13 +283,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/02/19/%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%B8%AAtelegram-input%E6%8F%92%E4%BB%B6/" rel="prev" title="如何写一个telegram input插件">
-      <i class="fa fa-chevron-left"></i> 如何写一个telegram input插件
+    <a href="/dragonFlyInSky.GitHub.io/2021/03/04/Jsch-%E5%88%9D%E5%BA%94%E7%94%A8/" rel="prev" title="Jsch 初应用">
+      <i class="fa fa-chevron-left"></i> Jsch 初应用
     </a></div>
-      <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/02/23/go%E5%B9%B6%E5%8F%91%E7%A4%BA%E4%BE%8B/" rel="next" title="go并发示例">
-      go并发示例 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -325,6 +345,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">java中的变量类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">实例变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">类变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">局部变量</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

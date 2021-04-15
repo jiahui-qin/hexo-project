@@ -26,6 +26,10 @@ categories:
 
     * 帧的复制和高可靠性消除
 
+* 802.1AS Timing and Synchronization
+
+    * 时间同步
+
 <!--more-->
 
 ## QCI 基于stream的流量监管
@@ -43,3 +47,18 @@ QBV是TSN的一个核心协议，时间感知队列通过时间感知整形器(T
 ## QBU 抢占式mac
 
 这个是给端口配置的，主要的输入就两个： `发送帧抢占时pmac的最小帧长`, ``
+
+
+## AS 时间同步
+
+在802.1AS中，时间同步是按照“域”（domain）划分的，包含多个PTP节点。在这些PTP节点中，有且仅有一个全局主节点（GrandMaster PTP Instance），其负责提供时钟信息给所有其他从节点。
+
+PTP节点又分为两类：PTP End Instance（PTP端节点）和PTP Relay Instance（PTP交换节点）其中：
+
+PTP End Instance或者作为GrandMaster，或者接收来自GrandMaster的时间同步信息
+
+PTP Relay Instance从某一接口接收时间同步信息，修正时间同步信息后，转发到其他接口
+
+**如何选择GrandMaster？**
+
+现在看是只按照优先级来选，而不看其他的指标，另外可以通过端口上的port-state结合实际物理拓扑来构造出一副图来指示整个网络的时间拓扑

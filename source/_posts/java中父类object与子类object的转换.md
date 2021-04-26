@@ -28,6 +28,8 @@ public clas Kid extends Parent {
 Parent parent  = new Parent();
 (kid) parent.setAttr2(null)
 ````
+
+
 刚开始感觉好像也没有问题嘛，结果运行的时候报了错：**ClassCastException**
 
 查了以下发现java中不允许父类向子类转换，因为父类对子类并不存在is a的关系，允许以下两种情况：
@@ -39,6 +41,9 @@ Parent parent  = new Parent();
 
 * 重新生成一个子类，将父类中的值赋给子类
 * 使用json来帮助转换：
+
+
+
     ```java
     import com.alibaba.fastjson.JSON;
     Parent parent = new Parent();

@@ -28,7 +28,7 @@
 <meta property="og:description" content="最近开始读张建飞的《代码精进之路：从码农到工匠》，感觉对于我这样没有开始太多编程的人是一本不错的书：没有经过系统的编码培训，需要从命名规范开始学起。 计划在这个分类下边记录一下读这本书的一些感悟&amp;知识，其实应该是感悟多一些，但是无奈java基础比较差，所以第一篇就以知识开始。 Optional出现在书中的（3.7 精简辅助代码）中，这个看到同事也用过，但是现在还是不了解这个东西可以干嘛，所">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-04-26T10:21:55.000Z">
-<meta property="article:modified_time" content="2021-04-26T12:16:43.509Z">
+<meta property="article:modified_time" content="2021-04-27T07:24:52.375Z">
 <meta property="article:author" content="saber qin">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="语法">
@@ -191,10 +191,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-26 10:21:55 / 修改时间：12:16:43" itemprop="dateCreated datePublished" datetime="2021-04-26T10:21:55+00:00">2021-04-26</time>
+              <time title="创建时间：2021-04-26 10:21:55" itemprop="dateCreated datePublished" datetime="2021-04-26T10:21:55+00:00">2021-04-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-27 07:24:52" itemprop="dateModified" datetime="2021-04-27T07:24:52+00:00">2021-04-27</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -226,7 +232,32 @@
 <p>以前我们想要完成以下逻辑的时候：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">String isocode = user.getAddress().getCountry().getIsocode().toUpperCase();</span><br><span class="line">`````</span><br><span class="line"></span><br><span class="line">就会考虑到：中间无论哪一个get如果是<span class="keyword">null</span>的话，都不会得到最后的结果，所以代码只能这么写：</span><br><span class="line"></span><br><span class="line">````java</span><br><span class="line"><span class="keyword">if</span> (user != <span class="keyword">null</span>) &#123;</span><br><span class="line">    Address address = user.getAddress();</span><br><span class="line">    <span class="keyword">if</span> (address != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Country country = address.getCountry();</span><br><span class="line">        <span class="keyword">if</span> (country != <span class="keyword">null</span>) &#123;</span><br><span class="line">            String isocode = country.getIsocode();</span><br><span class="line">            <span class="keyword">if</span> (isocode != <span class="keyword">null</span>) &#123;</span><br><span class="line">                isocode = isocode.toUpperCase();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样就把代码变得很麻烦。所以java8就推出了Optional来解决这个问题。</p>
-<h2 id="Optioal"><a href="#Optioal" class="headerlink" title="Optioal"></a>Optioal</h2>
+<h2 id="Optioal是什么"><a href="#Optioal是什么" class="headerlink" title="Optioal是什么"></a>Optioal是什么</h2><blockquote>
+<p>A container object which may or may not contain a non-null value. If a value is present, isPresent() returns true. If no value is present, the object is considered empty and isPresent() returns false.</p>
+</blockquote>
+<blockquote>
+<p>Additional methods that depend on the presence or absence of a contained value are provided, such as orElse() (returns a default value if no value is present) and ifPresent() (performs an action if a value is present).</p>
+</blockquote>
+<blockquote>
+<p>This is a value-based class; use of identity-sensitive operations (including reference equality (==), identity hash code, or synchronization) on instances of Optional may have unpredictable results and should be avoided.</p>
+</blockquote>
+<p>上边就是Optional代码的注释，简单的说就是一个容器可能包含了空值，使用isPresent()方法可以来判断值是否存在，还提供了orElse()这样的支持方法，同时禁止使用 identity-sensitive 类型的操作</p>
+<h2 id="如何使用Optional"><a href="#如何使用Optional" class="headerlink" title="如何使用Optional"></a>如何使用Optional</h2><p>如果对象可能为null也可以不能为null，那么应该这么做：</p>
+<pre><code>Optional&lt;User&gt; opt = Optional.ofNullable(user)
+</code></pre>
+<p>想要访问对象的话，可以这么做：</p>
+<pre><code>opt.ifPresent( u -&gt; assertEquals(user.getEmail(), u.getEmail()));
+</code></pre>
+<p>此外还可以使用orElse()/orElseGet() 这样的方法来处理null的情况。</p>
+<p>针对一开始举的例子，就可以这么使用：</p>
+<pre><code>String isocode = Optional.ofNullable(user)
+                .map(User::getAddress)
+                .map(Address::getCountry)
+                .map(Country::getIsocode)
+                .orElse(&quot;test&quot;)
+</code></pre>
+<p>备注一下  :: 是<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html">method reference</a>方法引用，也是java8更新的新特性。感觉像是为了优化代码结构而做，不用::也可以实现</p>
+
     </div>
 
     
@@ -308,7 +339,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89Optional%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么会有Optional？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Optioal"><span class="nav-number">2.</span> <span class="nav-text">Optioal</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89Optional%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么会有Optional？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Optioal%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">Optioal是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Optional"><span class="nav-number">3.</span> <span class="nav-text">如何使用Optional</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

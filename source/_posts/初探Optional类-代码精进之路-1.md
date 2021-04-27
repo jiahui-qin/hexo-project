@@ -48,4 +48,35 @@ if (user != null) {
 
 这样就把代码变得很麻烦。所以java8就推出了Optional来解决这个问题。
 
-## Optioal
+## Optioal是什么
+
+>A container object which may or may not contain a non-null value. If a value is present, isPresent() returns true. If no value is present, the object is considered empty and isPresent() returns false.
+
+>Additional methods that depend on the presence or absence of a contained value are provided, such as orElse() (returns a default value if no value is present) and ifPresent() (performs an action if a value is present).
+
+>This is a value-based class; use of identity-sensitive operations (including reference equality (==), identity hash code, or synchronization) on instances of Optional may have unpredictable results and should be avoided.
+
+上边就是Optional代码的注释，简单的说就是一个容器可能包含了空值，使用isPresent()方法可以来判断值是否存在，还提供了orElse()这样的支持方法，同时禁止使用 identity-sensitive 类型的操作
+
+## 如何使用Optional
+
+如果对象可能为null也可以不能为null，那么应该这么做：
+
+    Optional<User> opt = Optional.ofNullable(user)
+
+想要访问对象的话，可以这么做：
+
+    opt.ifPresent( u -> assertEquals(user.getEmail(), u.getEmail()));
+
+
+此外还可以使用orElse()/orElseGet() 这样的方法来处理null的情况。
+
+针对一开始举的例子，就可以这么使用：
+
+    String isocode = Optional.ofNullable(user)
+                    .map(User::getAddress)
+                    .map(Address::getCountry)
+                    .map(Country::getIsocode)
+                    .orElse("test")
+
+备注一下  :: 是[method reference](https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html)方法引用，也是java8更新的新特性。感觉像是为了优化代码结构而做，不用::也可以实现

@@ -20,21 +20,21 @@
     var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="既然标题是并发，先看看什么是并发： 多线程程序在单核心的CPU上运行是并发， 多线程程序在多核心CPU上运行是并行 并发是如何实现的呢？ 依靠的是CPU的时间分片来完成的。 什么是进程、线程、协程呢？ 进程是程序的一次执行过程">
+  <meta name="description" content="SOLID可以说是老生常谈了，秋招准备面试的时候就在看这个东西，无奈当时根本没有写代码，对于这些东西也完全不了解，最近写了一些代码，大概讲讲对这个的理解吧。 SOLID概览其中开闭原则、里氏替换原则是设计目标，单一职责、接口隔离、依赖倒置是设计方法 这里讲的是设计原则，不过SOLID并不是所有的设计原则，除了这几条之外还有DRY, YANGI, Rule of three等设计原则 Single">
 <meta property="og:type" content="article">
-<meta property="og:title" content="go并发基础知识">
-<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/20/go%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:title" content="SOLID设计原则-代码精进之路(2)">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/04/27/SOLID%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-2/index.html">
 <meta property="og:site_name" content="Dragon Fly in SKY">
-<meta property="og:description" content="既然标题是并发，先看看什么是并发： 多线程程序在单核心的CPU上运行是并发， 多线程程序在多核心CPU上运行是并行 并发是如何实现的呢？ 依靠的是CPU的时间分片来完成的。 什么是进程、线程、协程呢？ 进程是程序的一次执行过程">
+<meta property="og:description" content="SOLID可以说是老生常谈了，秋招准备面试的时候就在看这个东西，无奈当时根本没有写代码，对于这些东西也完全不了解，最近写了一些代码，大概讲讲对这个的理解吧。 SOLID概览其中开闭原则、里氏替换原则是设计目标，单一职责、接口隔离、依赖倒置是设计方法 这里讲的是设计原则，不过SOLID并不是所有的设计原则，除了这几条之外还有DRY, YANGI, Rule of three等设计原则 Single">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-20T11:21:49.000Z">
+<meta property="article:published_time" content="2021-04-27T15:47:52.000Z">
 <meta property="article:modified_time" content="2021-04-28T11:06:31.232Z">
 <meta property="article:author" content="saber qin">
-<meta property="article:tag" content="go">
-<meta property="article:tag" content="并发">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="读后感">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/20/go%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/04/27/SOLID%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-2/">
 
 
 <script id="page-configurations">
@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title>go并发基础知识 | Dragon Fly in SKY</title>
+  <title>SOLID设计原则-代码精进之路(2) | Dragon Fly in SKY</title>
   
 
 
@@ -168,7 +168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/02/20/go%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/04/27/SOLID%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
@@ -181,7 +181,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          go并发基础知识
+          SOLID设计原则-代码精进之路(2)
         </h1>
 
         <div class="post-meta">
@@ -191,7 +191,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-20 11:21:49" itemprop="dateCreated datePublished" datetime="2021-02-20T11:21:49+00:00">2021-02-20</time>
+              <time title="创建时间：2021-04-27 15:47:52" itemprop="dateCreated datePublished" datetime="2021-04-27T15:47:52+00:00">2021-04-27</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -206,7 +206,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/go%E5%88%9D%E5%AD%A6%E8%80%85%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">go初学者教程</span></a>
+                  <a href="/dragonFlyInSky.GitHub.io/categories/%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF/" itemprop="url" rel="index"><span itemprop="name">代码精进之路</span></a>
                 </span>
             </span>
 
@@ -221,26 +221,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>既然标题是并发，先看看什么是并发：</p>
-<p><strong>多线程程序在单核心的CPU上运行是并发</strong>， 多线程程序在多核心CPU上运行是并行</p>
-<p>并发是如何实现的呢？ 依靠的是CPU的时间分片来完成的。</p>
-<p>什么是进程、线程、协程呢？</p>
-<p>进程是程序的一次执行过程</p>
-<a id="more"></a>
-
-<p>线程是进程的一个执行实体，是CPU调度和分派的基本单位。一个进程可以创建和撤销多个线程。</p>
-<p>协程： 独立的栈空间，共享堆空间，调度由用户自己控制。类似用户级线程。协程是轻量级的线程</p>
-<hr>
-<p>go并发设计的核心是 <strong>goroutine</strong></p>
-<p>使用go关键词可以创建goroutine，将go声明放在一个函数前，运行这个函数，就会作为一个并发的独立线程。</p>
-<p>以下是三种用法：一个方法、匿名方法、直接写一个代码块</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//go 关键字放在方法调用前新建一个 goroutine 并执行方法体</span></span><br><span class="line"><span class="keyword">go</span> GetThingDone(param1, param2);</span><br><span class="line"></span><br><span class="line"><span class="comment">//新建一个匿名方法并执行</span></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(param1, param2)</span></span> &#123;</span><br><span class="line">&#125;(val1, val2)</span><br><span class="line"></span><br><span class="line"><span class="comment">//直接新建一个 goroutine 并在 goroutine 中执行代码块</span></span><br><span class="line"><span class="keyword">go</span> &#123;</span><br><span class="line">    <span class="comment">//do someting...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>进程间的通信可以使用channel，使用make离开创建channel</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ci := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">cs := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line">cf := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">interface</span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
-
-<p>有一点没有搞明白：</p>
-<p>java可以先创建多个线程，再一起执行，在go里边怎么创建多个线程再一起执行呢？</p>
-<p>要通过channel拿结果的话就要一直等待这个线程执行完毕，那要如何实现呢？</p>
+        <p>SOLID可以说是老生常谈了，秋招准备面试的时候就在看这个东西，无奈当时根本没有写代码，对于这些东西也完全不了解，最近写了一些代码，大概讲讲对这个的理解吧。</p>
+<h2 id="SOLID概览"><a href="#SOLID概览" class="headerlink" title="SOLID概览"></a>SOLID概览</h2><p>其中开闭原则、里氏替换原则是设计目标，单一职责、接口隔离、依赖倒置是设计方法</p>
+<p>这里讲的是设计原则，不过SOLID并不是所有的设计原则，除了这几条之外还有DRY, YANGI, Rule of three等设计原则</p>
+<h2 id="Single-Responsibility-Principle-单一职责原则"><a href="#Single-Responsibility-Principle-单一职责原则" class="headerlink" title="Single Responsibility Principle 单一职责原则"></a>Single Responsibility Principle 单一职责原则</h2><p>这个比较简单：一个软件模块只负责一个职责</p>
+<h2 id="Open-Close-Principle-开闭原则"><a href="#Open-Close-Principle-开闭原则" class="headerlink" title="Open Close Principle 开闭原则"></a>Open Close Principle 开闭原则</h2><p>软件实体对扩展开放，对修改关闭</p>
+<p>比如前段时间在用的装饰模式有一点开闭原则的感觉</p>
+<h2 id="Liskov-Substitution-Principle-里氏替换原则"><a href="#Liskov-Substitution-Principle-里氏替换原则" class="headerlink" title="Liskov Substitution Principle 里氏替换原则"></a>Liskov Substitution Principle 里氏替换原则</h2><p>程序中所有的父类都可以被子类替换</p>
+<p>LSP认为“程序中的对象应该是可以在不改变程序正确性的前提下被它的子类所替换的”，即子类应该可以替换任何基类能够出现的地方，并且经过替换后，代码还能正常工作。</p>
+<h2 id="Interface-Segregation-Principle-接口隔离原则"><a href="#Interface-Segregation-Principle-接口隔离原则" class="headerlink" title="Interface Segregation Principle 接口隔离原则"></a>Interface Segregation Principle 接口隔离原则</h2><p>多个特定用途的客户端接口好过一个宽泛用途的接口 –&gt; 这个思想很适合用来指导做接口拆分</p>
+<h2 id="Dependency-Inverse-Principle-依赖倒置原则"><a href="#Dependency-Inverse-Principle-依赖倒置原则" class="headerlink" title="Dependency Inverse Principle 依赖倒置原则"></a>Dependency Inverse Principle 依赖倒置原则</h2><p>模块之间交互应该依赖抽象，而非实现。DIP要求高层模块不应该依赖于低层模块，二者都应该依赖于抽象。抽象不应该依赖细节，细节应该依赖抽象。</p>
+<h2 id="Don’r-repeat-Yourself"><a href="#Don’r-repeat-Yourself" class="headerlink" title="Don’r repeat Yourself"></a>Don’r repeat Yourself</h2><p>同样的代码不要写太多次</p>
+<h2 id="You-Ain’t-Gonna-Need-It"><a href="#You-Ain’t-Gonna-Need-It" class="headerlink" title="You Ain’t Gonna Need It"></a>You Ain’t Gonna Need It</h2><p>不一定需要提前做优化</p>
+<h2 id="Rule-of-Three"><a href="#Rule-of-Three" class="headerlink" title="Rule of Three"></a>Rule of Three</h2><p>针对上述两个设计原则，如果同样的代码出现了3次或者以上，就要考虑抽象出来了。</p>
 
     </div>
 
@@ -250,8 +243,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/dragonFlyInSky.GitHub.io/tags/go/" rel="tag"># go</a>
-              <a href="/dragonFlyInSky.GitHub.io/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/java/" rel="tag"># java</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/%E8%AF%BB%E5%90%8E%E6%84%9F/" rel="tag"># 读后感</a>
           </div>
 
         
@@ -260,13 +253,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/02/19/%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%B8%AAtelegram-input%E6%8F%92%E4%BB%B6/" rel="prev" title="如何写一个telegram input插件">
-      <i class="fa fa-chevron-left"></i> 如何写一个telegram input插件
+    <a href="/dragonFlyInSky.GitHub.io/2021/04/26/%E5%88%9D%E6%8E%A2Optional%E7%B1%BB-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-1/" rel="prev" title="初探Optional类-代码精进之路(1)">
+      <i class="fa fa-chevron-left"></i> 初探Optional类-代码精进之路(1)
     </a></div>
-      <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/02/23/go%E5%B9%B6%E5%8F%91%E7%A4%BA%E4%BE%8B/" rel="next" title="go并发示例">
-      go并发示例 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -325,6 +315,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SOLID%E6%A6%82%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">SOLID概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Single-Responsibility-Principle-%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3%E5%8E%9F%E5%88%99"><span class="nav-number">2.</span> <span class="nav-text">Single Responsibility Principle 单一职责原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Open-Close-Principle-%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">Open Close Principle 开闭原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Liskov-Substitution-Principle-%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99"><span class="nav-number">4.</span> <span class="nav-text">Liskov Substitution Principle 里氏替换原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Interface-Segregation-Principle-%E6%8E%A5%E5%8F%A3%E9%9A%94%E7%A6%BB%E5%8E%9F%E5%88%99"><span class="nav-number">5.</span> <span class="nav-text">Interface Segregation Principle 接口隔离原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependency-Inverse-Principle-%E4%BE%9D%E8%B5%96%E5%80%92%E7%BD%AE%E5%8E%9F%E5%88%99"><span class="nav-number">6.</span> <span class="nav-text">Dependency Inverse Principle 依赖倒置原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Don%E2%80%99r-repeat-Yourself"><span class="nav-number">7.</span> <span class="nav-text">Don’r repeat Yourself</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#You-Ain%E2%80%99t-Gonna-Need-It"><span class="nav-number">8.</span> <span class="nav-text">You Ain’t Gonna Need It</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rule-of-Three"><span class="nav-number">9.</span> <span class="nav-text">Rule of Three</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

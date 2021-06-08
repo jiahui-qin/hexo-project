@@ -1,5 +1,5 @@
 ---
-title: influxdb学习-基础&重复值解决
+title: Q001:influxdb学习-基础&重复值解决
 date: 2021-06-01 18:51:17
 tags:
 - TICK
@@ -52,4 +52,25 @@ tag + field + field 合起来就是point，可以简单理解为：
 
 ## 如何应对重复值？
 
-这里的重复值暂且定义为tags+fields都一样的值。
+一般插入的时候不会写time，但是time+用户自定义的tag 才是完整的tag，而tag又是用来做索引的，这里我们就可以考虑一下：完全一样的tag能不能插入呢？
+
+做以下测试：
+
+先进入influxdb的命令行界面，插入以下三条一样的数据：
+
+    INSERT dupltest,host=serverA,region=us_west value=0.64 1623146232869000000
+    INSERT dupltest,host=serverA,region=us_west value=0.64 1623146232869000000
+    INSERT dupltest,host=serverA,region=us_west value=0.64 1623146232869000000
+                                    
+然后再查询一下：
+
+    name: dupltest
+    time                host    region  value
+    ----                ----    ------  -----
+    1623146232869000000 serverA us_west 0.64
+
+果然不能重复插入。到这里问题就解决了：只要tags完全一样，就不会重复插入。
+
+那考虑其他的情况：如果time是自动生成的话要怎么办呢？这样就不能通过依赖重复tag来剔除掉重复数据了。
+
+可以考虑一下自己插入一个时间数据，然后查询的时候查询最后一个时间，如果时间小于这个最后时间，就不插入。

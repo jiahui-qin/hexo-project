@@ -5,7 +5,7 @@ tags:
 - TICK
 - influxdb
 categories:
-- 指南
+- 日常问题解决
 ---
 
 为什么要写这篇文章呢？

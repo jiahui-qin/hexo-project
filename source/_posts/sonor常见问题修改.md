@@ -11,6 +11,7 @@ categories:
 
 好像是很久没有写blog了，今天在用sonor检查了一遍现在写的模块，开始对异味做一下修复，由于很多异味都是重复的，所以这里记录一下异味的类型&修复方法
 
+<!--more-->
 ### Provide the parametrized type for this generic
 
 通用类声明时应该指定参数类型，否则可能在运行时捕获异常。 也就是说用 `List<>, R<>, Set<>` 这种的时候最好还是要指定一下里边参数的类型。

@@ -2,9 +2,9 @@
 title: SelFund 开发计划（1）
 date: 2021-03-27 15:00:49
 tags:
-- 学习
+- selFund
 categories:
-- SelFund开发计划
+- 开发计划
 ---
 
 终于开始计划开发了，第一步先选定框架，和搭建环境

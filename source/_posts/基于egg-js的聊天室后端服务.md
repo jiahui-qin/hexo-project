@@ -53,8 +53,22 @@ categories:
 
 删掉了message这一块，把一些room的服务移动到了user里边，整体来看更加耦合一些。
 
+## 数据库构建
+
+构建数据库的时候主要在纠结几点：
+
+1. 如何将user和他enter的chatRoom对应起来
+2. 聊天信息如何存储
+
+第一个问题就用了一个state表来存储每个user和roomid的对应关系，用userid作为主键，也可以保证每个user只能进入一个room。
+
+第二个问题当前采用的方案是所有的聊天记录都放在一个record表里边，这样确实效率有点低了。我的理想方案是用influxdb来做存储，出于聊天记录持久化的目的，保存策略应该设置为不过期，然后每个roomid都是一个measurement，对应的字段就只有userid和发言内容，时间也可以直接用influxdb自动生成的时间，这样感觉起来就简介了很多。
+
+## 知识上的薄弱点
+
+对于代理、并发提交这块没研究过，有时间是要学习一下
 ## 代码地址
 
-接下来上我的githun地址：
+接下来上我的github地址：
 
 [nodeChatRoom](https://github.com/jiahui-qin/nodeChatRoom)

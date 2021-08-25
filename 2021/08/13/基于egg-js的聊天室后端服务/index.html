@@ -28,7 +28,7 @@
 <meta property="og:description" content="这大概是我写的第一个开源项目：本来是看到了阿里云的服务端性能大赛，就想要去插一脚去试试，结果没想到把程序写好之后卡在了部署上边，正好也有点忙（bushi），就干脆放弃了。所以就在这里把之前写好的代码开源出来，也算是迈出了个人的一小步吧。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-08-13T11:28:10.000Z">
-<meta property="article:modified_time" content="2021-08-24T11:00:57.160Z">
+<meta property="article:modified_time" content="2021-08-25T09:00:59.581Z">
 <meta property="article:author" content="saber qin">
 <meta property="article:tag" content="nodejs">
 <meta property="article:tag" content="eggjs">
@@ -199,7 +199,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-24 11:00:57" itemprop="dateModified" datetime="2021-08-24T11:00:57+00:00">2021-08-24</time>
+                <time title="修改时间：2021-08-25 09:00:59" itemprop="dateModified" datetime="2021-08-25T09:00:59+00:00">2021-08-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -260,7 +260,15 @@
 </li>
 </ul>
 <p>删掉了message这一块，把一些room的服务移动到了user里边，整体来看更加耦合一些。</p>
-<h2 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h2><p>接下来上我的githun地址：</p>
+<h2 id="数据库构建"><a href="#数据库构建" class="headerlink" title="数据库构建"></a>数据库构建</h2><p>构建数据库的时候主要在纠结几点：</p>
+<ol>
+<li>如何将user和他enter的chatRoom对应起来</li>
+<li>聊天信息如何存储</li>
+</ol>
+<p>第一个问题就用了一个state表来存储每个user和roomid的对应关系，用userid作为主键，也可以保证每个user只能进入一个room。</p>
+<p>第二个问题当前采用的方案是所有的聊天记录都放在一个record表里边，这样确实效率有点低了。我的理想方案是用influxdb来做存储，出于聊天记录持久化的目的，保存策略应该设置为不过期，然后每个roomid都是一个measurement，对应的字段就只有userid和发言内容，时间也可以直接用influxdb自动生成的时间，这样感觉起来就简介了很多。</p>
+<h2 id="知识上的薄弱点"><a href="#知识上的薄弱点" class="headerlink" title="知识上的薄弱点"></a>知识上的薄弱点</h2><p>对于代理、并发提交这块没研究过，有时间是要学习一下</p>
+<h2 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a>代码地址</h2><p>接下来上我的github地址：</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/jiahui-qin/nodeChatRoom">nodeChatRoom</a></p>
 
     </div>
@@ -347,7 +355,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">主要思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="nav-number">1.1.</span> <span class="nav-text">系统要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">技术选型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">系统架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%9C%B0%E5%9D%80"><span class="nav-number">3.</span> <span class="nav-text">代码地址</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">主要思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="nav-number">1.1.</span> <span class="nav-text">系统要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">技术选型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">系统架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9E%84%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">数据库构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E4%B8%8A%E7%9A%84%E8%96%84%E5%BC%B1%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">知识上的薄弱点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%9C%B0%E5%9D%80"><span class="nav-number">5.</span> <span class="nav-text">代码地址</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

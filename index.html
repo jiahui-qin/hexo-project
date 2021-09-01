@@ -186,10 +186,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-08-31 18:44:01 / 修改时间：11:00:54" itemprop="dateCreated datePublished" datetime="2021-08-31T18:44:01+00:00">2021-08-31</time>
+              <time title="创建时间：2021-08-31 18:44:01" itemprop="dateCreated datePublished" datetime="2021-08-31T18:44:01+00:00">2021-08-31</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -212,27 +218,14 @@
 
       
           <p>最近在搞docker部署相关的东西··不过由于缺少先验知识，导致学习效率极差就是了，这里大致记录一下8：</p>
-<ol>
-<li><p>彻底删除一个docker的痕迹</p>
-<p> 先假设我们有以下docker</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eb92e7cc1982   mysql            &quot;docker-entrypoint.s…&quot;   6 weeks ago   Exited (255) 34 hours ago     0.0.0.0:3306-&gt;3306&#x2F;tcp, 33060&#x2F;tcp   mysql</span><br></pre></td></tr></table></figure>
-<p> 命令：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker stop mysql</span><br><span class="line">docker rm mysql</span><br><span class="line">docker rmi mysql</span><br></pre></td></tr></table></figure>
-<p> 其中前两个是停止、删除docker容器，第三个是删除docker镜像，注意这里的参数也是docker镜像的name</p>
-</li>
-</ol>
-<ol start="2">
-<li><p>推送一个docker到docker hub</p>
-<p> 一般人们可能考虑推送到<code>docker.io</code>，这个也是默认的,但是我们肯定是要推送到私有仓库的，大概命令如下</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker login 10.10.10.10 <span class="comment">## 私有仓库地址</span></span><br><span class="line"><span class="comment">## 确定本地有这个docker image的情况下，给本地的image mysql 打上tag</span></span><br><span class="line">docker tag mysql 10.10.10.10/mysql:1.0.0.0</span><br><span class="line">docker push 10.10.10.10/mysql:1.0.0.0</span><br></pre></td></tr></table></figure>
-<p> 为什么要这么打tag··是因为我发现tag不加私有仓库地址的话好像会默认推送到<code>docker.io</code>,前边加上地址的话就会按照地址去推送。后边的1.0.0.0是版本号，不加的话就默认是latest？</p>
-</li>
-<li><p>docker-compose</p>
-</li>
-<li><p>docker的网络类型</p>
-</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/08/31/docker-%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0-1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -282,7 +275,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -411,7 +404,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -493,7 +486,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -574,7 +567,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -655,7 +648,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -741,7 +734,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -829,7 +822,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -914,7 +907,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1000,7 +993,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-31 11:00:54" itemprop="dateModified" datetime="2021-08-31T11:00:54+00:00">2021-08-31</time>
+                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">

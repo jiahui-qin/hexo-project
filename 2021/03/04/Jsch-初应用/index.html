@@ -28,7 +28,7 @@
 <meta property="og:description" content="什么是JschJsch是一个纯java写的ssh客户端，通过Jsch可以完全通过java来实现ssh的一些功能 为什么要用Jsch？有个需求要做一个netconf长连接到设备上，监听notifaction，看了一圈好像没有现成的解决办法，所以只能自己想办法研究Jsch写一个">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-04T17:25:01.000Z">
-<meta property="article:modified_time" content="2021-09-01T09:04:51.812Z">
+<meta property="article:modified_time" content="2021-09-02T15:29:37.293Z">
 <meta property="article:author" content="saber qin">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="jsch">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-01 09:04:51" itemprop="dateModified" datetime="2021-09-01T09:04:51+00:00">2021-09-01</time>
+                <time title="修改时间：2021-09-02 15:29:37" itemprop="dateModified" datetime="2021-09-02T15:29:37+00:00">2021-09-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -256,11 +256,15 @@
 </tr>
 </tbody></table>
 <h3 id="获取ssh的输出"><a href="#获取ssh的输出" class="headerlink" title="获取ssh的输出"></a>获取ssh的输出</h3><p>对channel有一个getInputStream的方法，可以获取到输入信息流，输出的类型是InputStream。当前的代码是这样的：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">InputStream inputStream = chn.getInputStream();</span><br><span class="line">    try &#123;</span><br><span class="line">        <span class="comment">//循环读取</span></span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="built_in">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//如果没有数据来，线程会一直阻塞在这个地方等待数据。</span></span><br><span class="line">        while ((i = inputStream.read(buffer)) != <span class="number">-1</span>) &#123;</span><br><span class="line">            System.out.<span class="built_in">println</span>(<span class="string">&quot;got data!&quot;</span>);</span><br><span class="line">            <span class="comment">//<span class="doctag">TODO:</span> 将获取的代码转化为字符串</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        <span class="comment">//断开连接后关闭会话</span></span><br><span class="line">        deviceConn.<span class="built_in">close</span>();</span><br><span class="line">        <span class="keyword">if</span> (inputStream != null) &#123;</span><br><span class="line">            inputStream.<span class="built_in">close</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">InputStream inputStream = chn.getInputStream();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//循环读取</span></span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//如果没有数据来，线程会一直阻塞在这个地方等待数据。</span></span><br><span class="line">        <span class="keyword">while</span> ((i = inputStream.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;got data!&quot;</span>);</span><br><span class="line">            <span class="comment">//<span class="doctag">TODO:</span> 将获取的代码转化为字符串</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">//断开连接后关闭会话</span></span><br><span class="line">        deviceConn.close();</span><br><span class="line">        <span class="keyword">if</span> (inputStream != <span class="keyword">null</span>) &#123;</span><br><span class="line">            inputStream.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>在这里实际上每次有输入的时候，都会看到got data，但是怎么把输入流转为string做解析我还在研究怎么做···</p>
 <p>这个<a target="_blank" rel="noopener" href="https://www.baeldung.com/convert-input-stream-to-string">文章</a>总结了一下如何把inputStream转化为string，但是我试了几个并不好用，最后用下列代码解决了输入流转string的问题：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] buffer = <span class="built_in">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="comment">//如果没有数据来，线程会一直阻塞在这个地方等待数据。</span></span><br><span class="line">while ((i = inputStream.read(buffer)) != <span class="number">-1</span>) &#123;</span><br><span class="line">    TextMessage textMessage = <span class="built_in">new</span> TextMessage(buffer);</span><br><span class="line">    System.out.<span class="built_in">println</span>(textMessage.getPayload());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="comment">//如果没有数据来，线程会一直阻塞在这个地方等待数据。</span></span><br><span class="line"><span class="keyword">while</span> ((i = inputStream.read(buffer)) != -<span class="number">1</span>) &#123;</span><br><span class="line">    TextMessage textMessage = <span class="keyword">new</span> TextMessage(buffer);</span><br><span class="line">    System.out.println(textMessage.getPayload());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当然为什么这个ok也是一个坑···具体的怎么用以后慢慢填坑吧···</p>
+<p>update 4.22：</p>
+<blockquote>
+<p>buffer里边存的东西是ascii，所以也可以自己转啦··这样子可能更安全</p>
+</blockquote>
 
     </div>
 
@@ -359,14 +363,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/dragonFlyInSky.GitHub.io/archives/">
         
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/dragonFlyInSky.GitHub.io/categories/">
           
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">

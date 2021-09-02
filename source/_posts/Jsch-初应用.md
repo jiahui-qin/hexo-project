@@ -35,7 +35,7 @@ Jsch是一个纯java写的ssh客户端，通过Jsch可以完全通过java来实�
 
 对channel有一个getInputStream的方法，可以获取到输入信息流，输出的类型是InputStream。当前的代码是这样的：
 
-````go
+````java
 InputStream inputStream = chn.getInputStream();
     try {
         //循环读取
@@ -58,7 +58,7 @@ InputStream inputStream = chn.getInputStream();
 
 这个[文章](https://www.baeldung.com/convert-input-stream-to-string)总结了一下如何把inputStream转化为string，但是我试了几个并不好用，最后用下列代码解决了输入流转string的问题：
 
-````go
+````java
 byte[] buffer = new byte[1024];
 int i = 0;
 //如果没有数据来，线程会一直阻塞在这个地方等待数据。
@@ -69,3 +69,7 @@ while ((i = inputStream.read(buffer)) != -1) {
 ````
 
 当然为什么这个ok也是一个坑···具体的怎么用以后慢慢填坑吧···
+
+update 4.22：
+
+> buffer里边存的东西是ascii，所以也可以自己转啦··这样子可能更安全

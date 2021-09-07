@@ -10,6 +10,7 @@ categories:
 
 这里按照时间记录一下gin框架使用的大致问题&如何使用
 
+<!--more-->
 
 1. 在gin里使用`get & post`  (2021/8/16)
 
@@ -105,3 +106,8 @@ categories:
     1. [database/sql, 和資料庫打個招呼](https://ithelp.ithome.com.tw/articles/10220392)
     2. [Go database/sql Scan & Value, 讓操作sql有一點點ORM的感覺](https://tedmax100.github.io/2020/12/21/Go-Database-Scan/)
     3. [Go Reflect 提高反射性能](https://geektutu.com/post/hpg-reflect.html)
+
+
+4. 使用gorm(2021/9/2)
+
+    今天反应了过来，为啥要自己傻乎乎的写sql？直接用框架不香吗··类似mybatsis之类，go里边也有gorm、xorm之类的ORM库，使用起来大概会方便很多吧。

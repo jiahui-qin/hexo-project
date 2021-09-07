@@ -28,7 +28,7 @@
 <meta property="og:description" content="从上周觉得在go里边手写db.exec(select * from xxx) 非常痛苦之后，开始使用gorm这个框架，感觉确实很不错，但是可能是由于自己的见识还是不够广阔，导致踩了一些小坑，还留了一些问题··这里先记录一下： 什么是gormgorm可以类比到java的mybatsis，非常方便的orm操作框架，可以方便的操作数据库。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-09-07T18:53:20.000Z">
-<meta property="article:modified_time" content="2021-09-07T11:01:32.653Z">
+<meta property="article:modified_time" content="2021-09-07T15:11:07.325Z">
 <meta property="article:author" content="saber qin">
 <meta property="article:tag" content="gorm">
 <meta property="article:tag" content="go">
@@ -193,7 +193,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-09-07 18:53:20 / 修改时间：11:01:32" itemprop="dateCreated datePublished" datetime="2021-09-07T18:53:20+00:00">2021-09-07</time>
+              <time title="创建时间：2021-09-07 18:53:20 / 修改时间：15:11:07" itemprop="dateCreated datePublished" datetime="2021-09-07T18:53:20+00:00">2021-09-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -221,8 +221,25 @@
 <a id="more"></a>
 
 <h2 id="怎么使用"><a href="#怎么使用" class="headerlink" title="怎么使用"></a>怎么使用</h2><p><a target="_blank" rel="noopener" href="https://learnku.com/docs/gorm/v2">官方教程</a>里边讲的已经非常详细了，我大致大致写一下流程</p>
-<h2 id="先建立数据库对应的struct，这个可以对应到spring里边的model"><a href="#先建立数据库对应的struct，这个可以对应到spring里边的model" class="headerlink" title="先建立数据库对应的struct，这个可以对应到spring里边的model"></a>先建立数据库对应的struct，这个可以对应到spring里边的model</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	gorm.Model</span><br><span class="line">	Name   <span class="keyword">string</span> <span class="string">`gorm:&quot;column:name; unique&quot; db:&quot;name&quot; json:&quot;name&quot; form:&quot;name&quot;`</span> </span><br><span class="line">	Desc   <span class="keyword">string</span> <span class="string">`gorm:&quot;column:desc&quot; db:&quot;desc&quot; json:&quot;desc&quot; form:&quot;desc&quot;`</span>         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这就是个非常普通的model，接下来我们挨个看</p>
+<h3 id="先建立数据库对应的struct，这个可以对应到spring里边的model"><a href="#先建立数据库对应的struct，这个可以对应到spring里边的model" class="headerlink" title="先建立数据库对应的struct，这个可以对应到spring里边的model"></a>先建立数据库对应的struct，这个可以对应到spring里边的model</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	gorm.Model</span><br><span class="line">	Name   <span class="keyword">string</span> <span class="string">`gorm:&quot;column:name; unique&quot; db:&quot;name&quot; json:&quot;name&quot; form:&quot;name&quot;`</span> </span><br><span class="line">	Desc   <span class="keyword">string</span> <span class="string">`gorm:&quot;column:desc&quot; db:&quot;desc&quot; json:&quot;desc&quot; form:&quot;desc&quot;`</span>         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这就是个非常普通的model，接下来我们挨个看：</p>
+<ul>
+<li><p>这个struct的名字是user， 可以用<code>db.AutoMigrate(&amp;User&#123;&#125;)</code>来检查表和struct是否匹配，如果这个表不存在，就会以struct的名字的复数形式来自动建表，比如这个结构自动建表的表名就是<strong>users</strong>，当然如果不想用这个表名的话，也可以手动指定其他的表名。</p>
+</li>
+<li><p>gorm.Model是内嵌了一个结构体，这个结构体里边包括id、创建时间、修改时间、删除时间。我们亦可以内嵌其他的结构体进来。</p>
+</li>
+<li><p>每个属性后边的描述体<code>gorm:&quot;column:name; unique&quot; db:&quot;name&quot; json:&quot;name&quot; form:&quot;name&quot;</code>在gorm这个里边可以指定列名、列是否是主键、是否是索引等····这里没有指定主键是因为grom.Model里边的id为默认主键。</p>
+</li>
+</ul>
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getConn</span><span class="params">()</span> <span class="params">(*gorm.DB, error)</span></span> &#123;</span><br><span class="line">	dsn := <span class="string">&quot;root:123456@tcp(localhost:3306)/fund?charset=utf8mb4&amp;parseTime=True&amp;loc=Local&quot;</span></span><br><span class="line">	db, error := gorm.Open(mysql.Open(dsn), &amp;gorm.Config&#123;&#125;)</span><br><span class="line">	sqlDB, _ := db.DB()</span><br><span class="line">	<span class="comment">// SetMaxIdleConns 设置空闲连接池中连接的最大数量</span></span><br><span class="line">	sqlDB.SetMaxIdleConns(<span class="number">10</span>)</span><br><span class="line">	<span class="comment">// SetMaxOpenConns 设置打开数据库连接的最大数量。</span></span><br><span class="line">	sqlDB.SetMaxOpenConns(<span class="number">100</span>)</span><br><span class="line">	<span class="comment">// SetConnMaxLifetime 设置了连接可复用的最大时间。</span></span><br><span class="line">	sqlDB.SetConnMaxLifetime(time.Hour)</span><br><span class="line">	<span class="keyword">return</span> db, error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他的函数直接调用<code>getConn()</code>获取db就可以了。</p>
+<h3 id="CRUD-Methods"><a href="#CRUD-Methods" class="headerlink" title="CRUD Methods"></a>CRUD Methods</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新增</span></span><br><span class="line">user := &amp;User&#123;Name: name, Desc: desc&#125;</span><br><span class="line">db.Debug().Create(user)</span><br><span class="line"></span><br><span class="line"><span class="comment">//查询</span></span><br><span class="line"><span class="keyword">var</span> user_in User</span><br><span class="line">db.Debug().Where(user).First(&amp;user_in)</span><br></pre></td></tr></table></figure>
+<p>为啥明明是最重要的却只写了这么点？因为这块网上资料最多似乎没必要看我的···</p>
+<p>但是这块我有个问题··先记录一下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以id作为冲突键，如果有冲突的话什么都不做</span></span><br><span class="line">db.Clauses(clause.OnConflict&#123;DoNothing: <span class="literal">true</span>&#125;).Create(&amp;user)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 以其他字段作为主键，如果冲突的话do nothing</span></span><br><span class="line">db.Clauses(clause.OnConflict&#123;</span><br><span class="line">	Columns:   []clause.Column&#123;&#123;Name: <span class="string">&quot;name&quot;</span>&#125;&#125;,DoNothing: <span class="literal">true</span>&#125;).Create(&amp;user)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我想要做Upsert，用name来检查冲突，如果有冲突的话do nothing，在上边代码的第二段里边指定了name，可以看生成的sql还是用的是id···不知道有没有大佬知道要怎么搞</p>
+<hr>
+<p>其他好像没啥了，想起来、遇到了再补充</p>
 
     </div>
 
@@ -305,7 +322,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFgorm"><span class="nav-number">1.</span> <span class="nav-text">什么是gorm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">怎么使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%BB%BA%E7%AB%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E5%BA%94%E7%9A%84struct%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%8F%AF%E4%BB%A5%E5%AF%B9%E5%BA%94%E5%88%B0spring%E9%87%8C%E8%BE%B9%E7%9A%84model"><span class="nav-number">3.</span> <span class="nav-text">先建立数据库对应的struct，这个可以对应到spring里边的model</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFgorm"><span class="nav-number">1.</span> <span class="nav-text">什么是gorm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">怎么使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%BB%BA%E7%AB%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E5%BA%94%E7%9A%84struct%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%8F%AF%E4%BB%A5%E5%AF%B9%E5%BA%94%E5%88%B0spring%E9%87%8C%E8%BE%B9%E7%9A%84model"><span class="nav-number">2.1.</span> <span class="nav-text">先建立数据库对应的struct，这个可以对应到spring里边的model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">2.2.</span> <span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CRUD-Methods"><span class="nav-number">2.3.</span> <span class="nav-text">CRUD Methods</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

@@ -20,21 +20,20 @@
     var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="最近在搞docker部署相关的东西··不过由于缺少先验知识，导致学习效率极差就是了，这里大致记录一下8：">
+  <meta name="description" content="这其实是个以前写的小工具，不过写都写了，就想着完善一下再放出来。以前写的只是简陋的在命令行里边呈现，现在计划搞上html页面，可以方便查看！应该也不用数据库把，只看打开这一次的消息不就行了。先把以前搞的代码贴上来吧，后续有时间再做完善： 这个的py版本是3.x main.py 1234567891011121314#!&#x2F;usr&#x2F;bin&#x2F;env python# -*- coding:utf8 -*-">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker &amp; 部署相关学习(1)">
-<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/08/31/docker-%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0-1/index.html">
+<meta property="og:title" content="用python来订阅查看redis消息">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/10/%E7%94%A8python%E6%9D%A5%E8%AE%A2%E9%98%85redis%E6%B6%88%E6%81%AF/index.html">
 <meta property="og:site_name" content="Dragon Fly in SKY">
-<meta property="og:description" content="最近在搞docker部署相关的东西··不过由于缺少先验知识，导致学习效率极差就是了，这里大致记录一下8：">
+<meta property="og:description" content="这其实是个以前写的小工具，不过写都写了，就想着完善一下再放出来。以前写的只是简陋的在命令行里边呈现，现在计划搞上html页面，可以方便查看！应该也不用数据库把，只看打开这一次的消息不就行了。先把以前搞的代码贴上来吧，后续有时间再做完善： 这个的py版本是3.x main.py 1234567891011121314#!&#x2F;usr&#x2F;bin&#x2F;env python# -*- coding:utf8 -*-">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-08-31T18:44:01.000Z">
+<meta property="article:published_time" content="2021-09-10T18:59:34.000Z">
 <meta property="article:modified_time" content="2021-09-10T11:05:04.756Z">
 <meta property="article:author" content="saber qin">
-<meta property="article:tag" content="docker">
-<meta property="article:tag" content="docker-compose">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/08/31/docker-%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0-1/">
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/10/%E7%94%A8python%E6%9D%A5%E8%AE%A2%E9%98%85redis%E6%B6%88%E6%81%AF/">
 
 
 <script id="page-configurations">
@@ -47,7 +46,7 @@
   };
 </script>
 
-  <title>docker & 部署相关学习(1) | Dragon Fly in SKY</title>
+  <title>用python来订阅查看redis消息 | Dragon Fly in SKY</title>
   
 
 
@@ -168,7 +167,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/08/31/docker-%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0-1/">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/10/%E7%94%A8python%E6%9D%A5%E8%AE%A2%E9%98%85redis%E6%B6%88%E6%81%AF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
@@ -181,7 +180,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          docker & 部署相关学习(1)
+          用python来订阅查看redis消息
         </h1>
 
         <div class="post-meta">
@@ -190,23 +189,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-08-31 18:44:01" itemprop="dateCreated datePublished" datetime="2021-08-31T18:44:01+00:00">2021-08-31</time>
+              <time title="创建时间：2021-09-10 18:59:34 / 修改时间：11:05:04" itemprop="dateCreated datePublished" datetime="2021-09-10T18:59:34+00:00">2021-09-10</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-10 11:05:04" itemprop="dateModified" datetime="2021-09-10T11:05:04+00:00">2021-09-10</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                  <a href="/dragonFlyInSky.GitHub.io/categories/python%E5%B0%8F%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">python小工具</span></a>
                 </span>
             </span>
 
@@ -221,48 +214,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>最近在搞docker部署相关的东西··不过由于缺少先验知识，导致学习效率极差就是了，这里大致记录一下8：</p>
-<a id="more"></a>
-
-<ol>
-<li><p>彻底删除一个docker的痕迹</p>
-<p> 先假设我们有以下docker</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eb92e7cc1982   mysql            &quot;docker-entrypoint.s…&quot;   6 weeks ago   Exited (255) 34 hours ago     0.0.0.0:3306-&gt;3306&#x2F;tcp, 33060&#x2F;tcp   mysql</span><br></pre></td></tr></table></figure>
-<p> 命令：</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker stop mysql</span><br><span class="line">docker rm mysql</span><br><span class="line">docker rmi mysql</span><br></pre></td></tr></table></figure>
-<p> 其中前两个是停止、删除docker容器，第三个是删除docker镜像，注意这里的参数也是docker镜像的name</p>
-</li>
-</ol>
-<ol start="2">
-<li><p>推送一个docker到docker hub</p>
-<p> 一般人们可能考虑推送到<code>docker.io</code>，这个也是默认的,但是我们肯定是要推送到私有仓库的，大概命令如下</p>
- <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker login 10.10.10.10 <span class="comment">## 私有仓库地址</span></span><br><span class="line"><span class="comment">## 确定本地有这个docker image的情况下，给本地的image mysql 打上tag</span></span><br><span class="line">docker tag mysql 10.10.10.10/mysql:1.0.0.0</span><br><span class="line">docker push 10.10.10.10/mysql:1.0.0.0</span><br></pre></td></tr></table></figure>
-<p> 为什么要这么打tag··是因为我发现tag不加私有仓库地址的话好像会默认推送到<code>docker.io</code>,前边加上地址的话就会按照地址去推送。后边的1.0.0.0是版本号，不加的话就默认是latest？</p>
-</li>
-<li><p>docker-compose</p>
-<p> docker-compose是编排docker容器/服务的工具，具体的还是看文档吧··我说的再说好像也不是很详细··</p>
-</li>
-<li><p>docker的网络类型</p>
-<p> 这里主要是看docker容器如何与宿主机通信、如何与其他的docker容器通信：</p>
-<ol>
-<li><p>bridge， 默认的网络桥接模式，会为每一个docker容器分配、设置ip，并将容器连接到docker0虚拟网桥，通过网桥和iptables nat表和宿主机通信</p>
-</li>
-<li><p>container 和一个指定的docker共享ip、端口范围</p>
-</li>
-<li><p>none 不指定网络连接方式，可以手工指定</p>
-</li>
-<li><p>host 使用宿主机的ip和端口</p>
-<p>还有一个在docker-compose里边可以用<code>networks</code>来指定网络，限定一些服务在一个网段里。</p>
-<p>如果有新的服务也想进入这个网段，可以在此服务的docker-compose文档中加入以下network来进入此网段</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">networks:</span></span><br><span class="line">    <span class="attr">exist_net:</span></span><br><span class="line">        <span class="attr">external:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-<li><p>Dockerfile</p>
-<p> 按照我的理解Dockerfile实际上是创建docker的文档，写好dockerfile之后，可以使用<br> <code>docker build</code> 来生成对应镜像。</p>
-</li>
-</ol>
-
+        <p>这其实是个以前写的小工具，不过写都写了，就想着完善一下再放出来。以前写的只是简陋的在命令行里边呈现，现在计划搞上html页面，可以方便查看！应该也不用数据库把，只看打开这一次的消息不就行了。先把以前搞的代码贴上来吧，后续有时间再做完善：</p>
+<p>这个的py版本是3.x</p>
+<p>main.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> RedisHelper <span class="keyword">import</span> RedisHelper</span><br><span class="line"></span><br><span class="line">obj = RedisHelper()</span><br><span class="line">redis_sub = obj.subscribe()</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    msg = <span class="built_in">eval</span>(<span class="built_in">str</span>(redis_sub.parse_response()))</span><br><span class="line">    print(msg[<span class="number">1</span>])</span><br><span class="line">    print(msg[<span class="number">2</span>])</span><br><span class="line">    print()   <span class="comment">#[b&#x27;message&#x27;, b&#x27;fm104.5&#x27;, b&#x27;who are you?&#x27;]</span></span><br><span class="line">    <span class="comment"># print(msg[2].decode(&#x27;utf8&#x27;))</span></span><br></pre></td></tr></table></figure>
+<p>redisHelper.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RedisHelper</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.__conn = redis.Redis(host=<span class="string">&#x27;127.0.0.1&#x27;</span>,port = <span class="string">&#x27;3379&#x27;</span>)   <span class="comment">#连接本机，ip不用写</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">subscribe</span>(<span class="params">self</span>):</span></span><br><span class="line">        pub = self.__conn.pubsub()</span><br><span class="line">        pub.subscribe(<span class="string">&quot;UP&quot;</span>)</span><br><span class="line">        pub.subscribe(<span class="string">&quot;DOWN&quot;</span>)</span><br><span class="line">        pub.subscribe(<span class="string">&quot;START&quot;</span>)</span><br><span class="line">        pub.subscribe(<span class="string">&quot;CLOSE&quot;</span>)</span><br><span class="line">        pub.parse_response()  <span class="comment">#准备好监听(再调用一次就是开始监听)</span></span><br><span class="line">        <span class="keyword">return</span> pub</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -271,8 +228,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/dragonFlyInSky.GitHub.io/tags/docker/" rel="tag"># docker</a>
-              <a href="/dragonFlyInSky.GitHub.io/tags/docker-compose/" rel="tag"># docker-compose</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/python/" rel="tag"># python</a>
           </div>
 
         
@@ -281,13 +237,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/08/16/gin%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8-selFund%E8%BF%9B%E5%B1%95/" rel="prev" title="go学习&selFund进展">
-      <i class="fa fa-chevron-left"></i> go学习&selFund进展
+    <a href="/dragonFlyInSky.GitHub.io/2021/09/09/%E7%BB%99hexo%E7%9A%84post%E6%96%87%E4%BB%B6%E5%90%8D%E5%8A%A0%E4%B8%8A%E6%97%A5%E6%9C%9F/" rel="prev" title="给hexo的post文件名加上日期">
+      <i class="fa fa-chevron-left"></i> 给hexo的post文件名加上日期
     </a></div>
-      <div class="post-nav-item">
-    <a href="/dragonFlyInSky.GitHub.io/2021/09/02/%E5%AF%B9%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E5%8D%B0%E8%B1%A1/" rel="next" title="对高可用的第一印象">
-      对高可用的第一印象 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     

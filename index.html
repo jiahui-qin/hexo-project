@@ -186,10 +186,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-11-09 17:31:12 / 修改时间：10:00:33" itemprop="dateCreated datePublished" datetime="2021-11-09T17:31:12+00:00">2021-11-09</time>
+              <time title="创建时间：2021-11-09 17:31:12" itemprop="dateCreated datePublished" datetime="2021-11-09T17:31:12+00:00">2021-11-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
+              </span>
 
           
 
@@ -244,10 +250,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-11-09 17:29:25 / 修改时间：10:00:33" itemprop="dateCreated datePublished" datetime="2021-11-09T17:29:25+00:00">2021-11-09</time>
+              <time title="创建时间：2021-11-09 17:29:25" itemprop="dateCreated datePublished" datetime="2021-11-09T17:29:25+00:00">2021-11-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -271,12 +283,14 @@
       
           <p>最近在写一个定时任务系统，其实是相当简单，也就是用了quartz，但是写的时候遇到了一个小问题，前端创建scheduler的时候，总不能传待执行task的类名吧，这也太尬了。于是就又有了一个小小的需求：要展示所有可执行task的名称</p>
 <p>在我的代码里，我的所有可执行task都提供了一个接口，在一个quartz模块里有一个package里边写了很多个类就专门来调task接口，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/job/job001.java</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">job001</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        log.info(<span class="string">&quot;do job001&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>于是就在job这个package下所有的类就全部都是可供执行的job。那么这个任务就等价于：如何展示这个package下所有class的类名和名称</p>
-<p>其实最简单的方法：就是搞上一个数据库，把数据都存进去，可是这样未免过于不优雅，每次新增任务的时候还要更新数据库里边的数据。于是我就想：能不能直接操作文件？</p>
-<p>于是搜了一番果然找到有大佬早早就做过类似的工作：大佬做的工作也非常详细，直接提供类方法可以查看jar包和file里的所有类名，一番删除修改之后就直接可以获取到这个package下所有的类名了，可以说是非常方便</p>
-<p>那么还有一个问题：如何给这个类名对应一个便于前端理解的名字呢？我就给每个task类都加了一个<code>getName()</code>的方法，使用反射来调用这个方法，就可以获取到类所对应的名称了。一般而言，这里想要都是有其固定意义的，想要写重复还是挺难的把！再说就算写重复也还是可以校验的。</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/11/09/%E5%A6%82%E4%BD%95%E5%B1%95%E7%A4%BAquartz%E6%89%80%E6%9C%89%E5%8F%AF%E6%89%A7%E8%A1%8Cjob/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -326,7 +340,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -408,7 +422,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -490,7 +504,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -577,7 +591,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -691,7 +705,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -805,7 +819,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -903,7 +917,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -990,7 +1004,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-09 10:00:33" itemprop="dateModified" datetime="2021-11-09T10:00:33+00:00">2021-11-09</time>
+                <time title="修改时间：2021-11-10 09:59:38" itemprop="dateModified" datetime="2021-11-10T09:59:38+00:00">2021-11-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">

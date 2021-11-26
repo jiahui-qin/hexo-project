@@ -5,7 +5,7 @@ tags:
 - quartz
 - java
 categories:
-- devlop
+- backend
 ---
 
 最近在写一个定时任务系统，其实是相当简单，也就是用了quartz，但是写的时候遇到了一个小问题，前端创建scheduler的时候，总不能传待执行task的类名吧，这也太尬了。于是就又有了一个小小的需求：要展示所有可执行task的名称

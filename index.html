@@ -163,6 +163,85 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/12/07/mave%E4%B9%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%BE%E4%B8%8D%E5%88%B0%E6%88%91%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/dragonFlyInSky.GitHub.io/2021/12/07/mave%E4%B9%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%BE%E4%B8%8D%E5%88%B0%E6%88%91%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96/" class="post-title-link" itemprop="url">mave之为什么找不到我要的依赖</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-12-07 21:03:06 / 修改时间：13:39:47" itemprop="dateCreated datePublished" datetime="2021-12-07T21:03:06+00:00">2021-12-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>今天同事问了我一个问题：为啥找不到项目里边的一个依赖，这个项目我也是刚刚接手，然而我可以正常运行。最开始觉得有点幼稚，依赖都是在远程仓库里边下载下来的，这么可能找不到呢？</p>
+<p>于是我也试着分析了一下：</p>
+<p>找不到的依赖是一个叫做<code>telnet-client</code>的jar包，在<a target="_blank" rel="noopener" href="https://developer.aliyun.com/mvn/searchs">aliyun的仓库</a>搜索了一下，确实没有找到telnet-client这个包。翻了翻程序，程序里边import的是<code>org.apache.commons.net.examples.telnet.client</code>，看到这里我就误以为这里的telnet.client就是我要找的包<code>telnet-client</code>,于是一顿找，发现怎么都不对劲。</p>
+<p>过了会，同时告诉说，发现删掉<code>telnet-client</code>这个依赖，用<code>commons-net</code>来替换也可以正常运行，我就去看了一下<code>commons-net</code>的代码，发现里边是有这个telnet-client这个类，于是我就误以为maven可以直接引用一个jar包里的一个类。就这么成功的和同事糊弄了过去。</p>
+<p>后来怎么想怎么不对劲：一个类哪里来的版本号？这个<code>telnet-client</code>必然应该是个jar包嘛。这么看的话，程序里import进来的<code>telnet.client</code>确实是<code>commons-net</code>的一个类，那为什么会用到这个呢··那就应该是因为<code>commons-net</code>是<code>telnet-client</code>的依赖··所以被引入了进来。</p>
+<p>所以整理一下，程序里边调用的其实是pom里引入jar包的所依赖的jar包··</p>
+<p>其实归根结底，还是对maven不太熟悉，那就趁着这个机会，学习一下maven、版本管理相关的知识？</p>
+<h2 id="maven的生命周期："><a href="#maven的生命周期：" class="headerlink" title="maven的生命周期："></a>maven的生命周期：</h2><p><img src="/images/2021-12-7/mvn_life.png"></p>
+<p>不过maven实际上并不是只有这几个生命周期，实际上还有很多很多···</p>
+<h2 id="maven的仓库"><a href="#maven的仓库" class="headerlink" title="maven的仓库"></a>maven的仓库</h2><p>maven会默认在用户目录下创建一个<code>.m2/repository</code>的仓库目录。运行maven的时候，所有的依赖都要在本地仓库获取，本地没有的就从远程仓库拉取</p>
+<p>maven的搜索顺序是： 本地仓库 -&gt; 中央仓库  -&gt; 远程仓库（如果有设置）-&gt;  结束或者抛出未找到的错误</p>
+<p>中央仓库是在settings.xml中设置的，可以设置aliyun的镜像节点， 如果想要添加远程仓库的话，则在项目的pom文件里添加repositories-repositories节点</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/12/05/%E6%B7%B1%E5%9C%B3%E5%85%89%E6%98%8E%E5%8C%BA%E8%B8%A9%E7%9B%98%E5%8F%82%E8%80%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -186,10 +265,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-12-05 20:42:03 / 修改时间：13:32:10" itemprop="dateCreated datePublished" datetime="2021-12-05T20:42:03+00:00">2021-12-05</time>
+              <time title="创建时间：2021-12-05 20:42:03" itemprop="dateCreated datePublished" datetime="2021-12-05T20:42:03+00:00">2021-12-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -277,7 +362,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -358,7 +443,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -445,7 +530,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -527,7 +612,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -609,7 +694,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -691,7 +776,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -778,7 +863,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -892,7 +977,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
+                <time title="修改时间：2021-12-07 13:39:47" itemprop="dateModified" datetime="2021-12-07T13:39:47+00:00">2021-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -956,104 +1041,6 @@
 <li>功能上有什么要增加的呢？</li>
 </ol>
 <p>不过我又有了一个新项目：netconf的notification持续连接&amp;呈现！先搞个java版的问题不大吧？</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/20/%E7%BA%A6%E5%AE%9A%E5%A4%A7%E4%BA%8E%E9%85%8D%E7%BD%AE%EF%BC%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
-      <meta itemprop="name" content="saber qin">
-      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dragon Fly in SKY">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dragonFlyInSky.GitHub.io/2021/09/20/%E7%BA%A6%E5%AE%9A%E5%A4%A7%E4%BA%8E%E9%85%8D%E7%BD%AE%EF%BC%9F/" class="post-title-link" itemprop="url">约定大于配置？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-09-20 16:35:55" itemprop="dateCreated datePublished" datetime="2021-09-20T16:35:55+00:00">2021-09-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-05 13:32:10" itemprop="dateModified" datetime="2021-12-05T13:32:10+00:00">2021-12-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>刚开始看spring的时候，总会提到一个：在spring里边遵循约定大于配置的思想，刚开始的时候写程序就是瞎写一通，后来写的多了也逐渐明白了约定大于配置是什么意思：</p>
-<blockquote>
-<p>约定大于配置本质上还是为了方便代码编写，并没有提供什么新的功能。</p>
-</blockquote>
-<p>举个例子，正常要写一个程序，要对数据库的某个表进行CRUD，那么在程序里边肯定要完成以下动作：</p>
-<ol>
-<li>指定数据库名称</li>
-<li>载入数据库驱动</li>
-<li>给定数据库地址、p/w</li>
-<li>连接至数据库</li>
-<li>输入CRUD语句</li>
-<li>解析执行结果:绑定字段至目的结构上</li>
-<li>关闭数据库连接</li>
-</ol>
-<p>可见还是相当麻烦的。那么约定大于配置是如何简化这个流程呢?</p>
-<p>在gorm里边简化的相当明显：</p>
-<ol>
-<li>默认model的复数形式为表名</li>
-<li>默认id为主键</li>
-<li>列名是字段名的小写形式</li>
-<li>·····</li>
-</ol>
-<p>只要我们遵循以上约定，就不用指定表名、手动绑定字段···等很多比较重复的工作。</p>
-<p>很多语言、工具都引入了这样的思想，可以明显节约我们的开发时间</p>
-<p>当然，约定大于配置肯定是有缺点的：换一个团队、换一个工具，又要花一定的精力来熟悉新的约定，就好像很多人对Lombok的吐槽一样：“只是写个getter/setter都懒得写？搞得所有人都要去配置Lombok”</p>
 
       
     </div>
@@ -1138,20 +1125,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/dragonFlyInSky.GitHub.io/archives/">
         
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/dragonFlyInSky.GitHub.io/categories/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/dragonFlyInSky.GitHub.io/tags/">
           
-        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-count">50</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

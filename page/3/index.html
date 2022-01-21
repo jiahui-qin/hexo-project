@@ -163,6 +163,96 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/02/%E5%AF%B9%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E5%8D%B0%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/dragonFlyInSky.GitHub.io/2021/09/02/%E5%AF%B9%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E5%8D%B0%E8%B1%A1/" class="post-title-link" itemprop="url">对高可用的第一印象</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-02 23:04:33" itemprop="dateCreated datePublished" datetime="2021-09-02T23:04:33+00:00">2021-09-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/%E6%96%B9%E6%B3%95%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">方法论</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>研三准备面试的时候就关注过这些概念，无奈自己太菜，也没有怎么实践过，粗糙的看了几篇文章也就全都忘掉了。</p>
+<p>今天在地铁上的时候，又看了几篇高可用相关的文章，感觉有一点点微小的意思，大致写一下自己的理解吧</p>
+<h2 id="什么是高可用？"><a href="#什么是高可用？" class="headerlink" title="什么是高可用？"></a>什么是高可用？</h2><p>一个系统在99.99…%的时间里都是可用的，那就是高可用，总而言之，就是要尽可能的减少系统停机的时间</p>
+<h2 id="那么会有哪些因素会影响系统的高可用？"><a href="#那么会有哪些因素会影响系统的高可用？" class="headerlink" title="那么会有哪些因素会影响系统的高可用？"></a>那么会有哪些因素会影响系统的高可用？</h2><ol>
+<li><p>程序设计：程序写的太烂导致内存溢出、程序挂掉还有啥高可用可言··这个在商业软件上大概考虑的不是很多</p>
+</li>
+<li><p>承载的容器挂掉：这个就不是我们自己能够控制的了，比如掉电、寿命、温度··各种因素都有可能导致一个物理机挂掉，那么这种情况怎么办？</p>
+</li>
+</ol>
+<h2 id="如何提高系统的可用性？"><a href="#如何提高系统的可用性？" class="headerlink" title="如何提高系统的可用性？"></a>如何提高系统的可用性？</h2><p>思路很简单：如果放在一个机器上容易挂掉，那么就放在n台机器上：n越大，可用性就越高：总不可能这么多台机器一起挂掉吧。</p>
+<p>那么放在n台机器上就有问题了：</p>
+<p>各台机器之间的地位是平等的，还是master-slave的结构呢？现在来看大多使用的是主从架构。</p>
+<p>接下来就大致看一下不同类型的应用程序如何实现高可用：</p>
+<h3 id="RabbitMQ-镜像集群模式"><a href="#RabbitMQ-镜像集群模式" class="headerlink" title="RabbitMQ:镜像集群模式"></a>RabbitMQ:镜像集群模式</h3><p>所有的queue都可以存在于多个实例，一个实例挂了还可以请求其它的实例··</p>
+<h3 id="Kafka：HA机制"><a href="#Kafka：HA机制" class="headerlink" title="Kafka：HA机制"></a>Kafka：HA机制</h3><p>每部分数据都会同步存储到多台设备上，然后读写都和一个leader打交道，只有所有的数据在所有的follower上都写入成功，才返回写成功，这样也才可以读到这个数据。一个follower的数据失效之后还可以在其他的follower上读。</p>
+<h3 id="Redis：哨兵"><a href="#Redis：哨兵" class="headerlink" title="Redis：哨兵"></a>Redis：哨兵</h3><p>哨兵是一个独立的进程，通过向redis服务器发送命令并等待响应从而实现监控。</p>
+<p>当master发生故障的时候，多个哨兵进行投票，确认此master下线之后，就会进行故障切换：把每个哨兵所监控的slave服务器的master切换到新选举出来的master</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/08/31/docker-%E9%83%A8%E7%BD%B2%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -194,7 +284,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -275,7 +365,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -356,7 +446,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -438,7 +528,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -519,7 +609,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -600,7 +690,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -686,7 +776,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -774,7 +864,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -859,7 +949,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
+                <time title="修改时间：2022-01-21 10:02:40" itemprop="dateModified" datetime="2022-01-21T10:02:40+00:00">2022-01-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -910,93 +1000,10 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/04/26/%E5%88%9D%E6%8E%A2Optional%E7%B1%BB-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
-      <meta itemprop="name" content="saber qin">
-      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dragon Fly in SKY">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dragonFlyInSky.GitHub.io/2021/04/26/%E5%88%9D%E6%8E%A2Optional%E7%B1%BB-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-1/" class="post-title-link" itemprop="url">初探Optional类-代码精进之路(1)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-26 10:21:55" itemprop="dateCreated datePublished" datetime="2021-04-26T10:21:55+00:00">2021-04-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-29 07:50:20" itemprop="dateModified" datetime="2021-12-29T07:50:20+00:00">2021-12-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF/" itemprop="url" rel="index"><span itemprop="name">代码精进之路</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近开始读张建飞的《代码精进之路：从码农到工匠》，感觉对于我这样没有开始太多编程的人是一本不错的书：没有经过系统的编码培训，需要从命名规范开始学起。</p>
-<p>计划在这个分类下边记录一下读这本书的一些感悟&amp;知识，其实应该是感悟多一些，但是无奈java基础比较差，所以第一篇就以知识开始。</p>
-<p>Optional出现在书中的（3.7 精简辅助代码）中，这个看到同事也用过，但是现在还是不了解这个东西可以干嘛，所以就在这里记录一下。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/04/26/%E5%88%9D%E6%8E%A2Optional%E7%B1%BB-%E4%BB%A3%E7%A0%81%E7%B2%BE%E8%BF%9B%E4%B9%8B%E8%B7%AF-1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/dragonFlyInSky.GitHub.io/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/dragonFlyInSky.GitHub.io/">1</a><a class="page-number" href="/dragonFlyInSky.GitHub.io/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/dragonFlyInSky.GitHub.io/page/4/">4</a><a class="page-number" href="/dragonFlyInSky.GitHub.io/page/5/">5</a><a class="extend next" rel="next" href="/dragonFlyInSky.GitHub.io/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/dragonFlyInSky.GitHub.io/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/dragonFlyInSky.GitHub.io/">1</a><a class="page-number" href="/dragonFlyInSky.GitHub.io/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/dragonFlyInSky.GitHub.io/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/dragonFlyInSky.GitHub.io/page/6/">6</a><a class="extend next" rel="next" href="/dragonFlyInSky.GitHub.io/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1062,7 +1069,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
       <div class="site-state-item site-state-posts">
           <a href="/dragonFlyInSky.GitHub.io/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1075,7 +1082,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
       <div class="site-state-item site-state-tags">
             <a href="/dragonFlyInSky.GitHub.io/tags/">
           
-        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-count">55</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1110,7 +1117,7 @@ select * from monitor.autogen.measurement1 order by time DESC limit 10
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

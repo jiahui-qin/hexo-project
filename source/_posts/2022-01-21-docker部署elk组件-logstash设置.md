@@ -141,4 +141,6 @@ filter {
 }
 ```
 
-这里很用到了之前filebeat的`docType`标记来做处理
+这里用到了之前filebeat的`docType`标记来做处理，至于match里边的grok表达式，写好之后可以在kinbana里边的devtools验证。这里我有踩到一个坑：我有一个自己定义的`threadName`的正则表达式，写在了一个单独的pattern文件里，然而坑的是没有挂在的地方···在网上翻了好长时间也没有找到，如果有大佬知道，还请指教一下。最后还是用`GREADYDATA`来代替。
+
+最后一个要注意的点就是索引模式：如果不对默认的output插件修改的话，那么es里边的所有item都是用`logstash`来开头的，就可以直接用`logstash*`这个匹配模式来做匹配，可以匹配到所有的item。但是如果修改了output，那么对应的索引模式也要修改。

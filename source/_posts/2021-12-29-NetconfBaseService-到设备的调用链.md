@@ -14,6 +14,8 @@ categories:
 
 最开始是先在最外层创建一个NetconfBaseService对象，要传的参数也很简单了,只要传入挂载设备的id就可以了
 
+<!--more-->
+
 ```java
 NetconfBaseService netconfBaseService = netconfSBPlugin.getNetconfBaseService(NodeId.getDefaultInstance("1")).orElseThrow(()->new NullPointerException("no such device in device tree!"));
 DOMRpcResult domRpcResult= netconfBaseService.editConfig(NetconfMessageTransformUtil.NETCONF_RUNNING_QNAME,
@@ -159,7 +161,7 @@ public interface DOMRpcService extends DOMService {
 显然message就是要传给设备的信息。
 
 
-
+更底层的可以参考[SDNLAB的这篇文章](https://www.sdnlab.com/22997.html)
 
 
 

@@ -27,4 +27,4 @@ Error response from daemon: conflict: unable to delete 3a5e93284781 (must be for
 docker rmi $(docker images --format "{{.Repository}}:{{.Tag}}")
 ```
 
-就搞定了
+删除images的时候用Repository:Tag的方式来删除就搞定了

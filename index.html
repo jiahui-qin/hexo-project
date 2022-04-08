@@ -163,6 +163,166 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2022/04/07/FeignException%E4%B8%ADbody%E9%95%BF%E5%BA%A6%E7%9A%84%E5%B0%8F%E5%9D%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/dragonFlyInSky.GitHub.io/2022/04/07/FeignException%E4%B8%ADbody%E9%95%BF%E5%BA%A6%E7%9A%84%E5%B0%8F%E5%9D%91/" class="post-title-link" itemprop="url">FeignException中body长度的小坑</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-07 17:03:36" itemprop="dateCreated datePublished" datetime="2022-04-07T17:03:36+00:00">2022-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前几天看到一个bug：别的模块通过feign调用我的模块报错，错误信息显示不完整··当然我是有点懵的：不应该啊，我看日志里边整个日志都是有的，怎么会用feign传过来就出了问题呢？然后第一反应就是肯定是feign限制了http传输过程中body的长度，当然这个第一反应也没有错。</p>
+<p>我就开始在代码中定位问题，然而没想到我自己彻底走歪了：先到公共组件库里边发现公共组件对<code>Fallback</code>做了封装，写了一个专属的<code>fallbackFactory</code>，在这个里边把<code>errormsg</code>转成了<code>FeignException</code>的格式，在这个里边确实会对超长的body做压缩，变成<code>[response.status() during [response.request().httpMethod()] to [response.request().url()] [methodKey]: [body]]</code>的形式，如果body长度大于400，就会截取前200个<code>char</code>，然后在后边补上<code>...(xxx bytes)</code>。</p>
+<p>我就想那我不转成<code>FeignException</code>不就完事了？一顿操作下去就搞定了，接下来一顿调试发现怎么改都不成，不对劲啊，怎么没有用呢··然后又想了想，发现我刚开始写的时候根本没看公共组件库，用的是原生的<code>fallbackFactory</code>。那就只有一个可能：feign会自己把<code>error</code>消息转换成<code>FeignException</code>类。</p>
+<p>接下来我觉得这么搓肯定是因为我们用的版本太老了，新的版本里边这个长度肯定是可以配置的，就跑到github上一顿看··发现最新版本的确实有优化，然而只是把变量抽了出来，还是不可配置····</p>
+<p>那没辙了，乖乖自己修改callback长度吧。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2022/04/07/AutoCloseable%E7%9A%84%E5%A6%99%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/dragonFlyInSky.GitHub.io/2022/04/07/AutoCloseable%E7%9A%84%E5%A6%99%E7%94%A8/" class="post-title-link" itemprop="url">AutoCloseable的妙用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-07 16:46:45" itemprop="dateCreated datePublished" datetime="2022-04-07T16:46:45+00:00">2022-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>讲真java里有不少奇妙的接口/注解，我觉得其实都挺好用，然而日常就是用的太少了。</p>
+<p>为啥要提到<code>AutoCloseable</code>这个接口，是因为前段时间遇到一个bug：发现很多设备连接在get之后没有正确关闭，这个问题很明显，这是代码的问题嘛，不管get过程中有没有抛出错误，都应该关闭掉这个连接。按照正常的写法，我们一般会这么写：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/dragonFlyInSky.GitHub.io/2022/04/07/AutoCloseable%E7%9A%84%E5%A6%99%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2022/03/03/feign%E8%B0%83%E7%94%A8%E5%A4%B1%E8%B4%A5%E5%90%8E%E8%BF%94%E5%9B%9E%E9%94%99%E8%AF%AF%E7%BB%93%E6%9E%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -186,10 +346,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-03-03 17:02:04 / 修改时间：09:29:03" itemprop="dateCreated datePublished" datetime="2022-03-03T17:02:04+00:00">2022-03-03</time>
+              <time title="创建时间：2022-03-03 17:02:04" itemprop="dateCreated datePublished" datetime="2022-03-03T17:02:04+00:00">2022-03-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -216,6 +382,90 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/dragonFlyInSky.GitHub.io/2022/03/03/feign%E8%B0%83%E7%94%A8%E5%A4%B1%E8%B4%A5%E5%90%8E%E8%BF%94%E5%9B%9E%E9%94%99%E8%AF%AF%E7%BB%93%E6%9E%9C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2022/02/25/%E4%BB%8E0%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0go%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/dragonFlyInSky.GitHub.io/2022/02/25/%E4%BB%8E0%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0go%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">从0开始学习go微服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-25 16:44:51" itemprop="dateCreated datePublished" datetime="2022-02-25T16:44:51+00:00">2022-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>今天经过仔细思考，感觉走java这条路只能越走越窄，不如开始转go，才有一线生机···</p>
+<p>虽然写过一点点go代码，但是还是算是小白状态，所以我决定今天开始每天都要学习go！！</p>
+<p>于是找到的第一个教程就是这个： Go语言中文网的<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/oRX-OUOP9Ak5R1MEHRU5gg">带你十天轻松搞定 Go 微服务系列</a></p>
+<p>于是今天就从一个全新的状态开始学习–</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/dragonFlyInSky.GitHub.io/2022/02/25/%E4%BB%8E0%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0go%E5%BE%AE%E6%9C%8D%E5%8A%A1/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -270,7 +520,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -353,7 +603,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -438,7 +688,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -521,7 +771,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -603,7 +853,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -686,7 +936,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
+                <time title="修改时间：2022-04-08 08:37:25" itemprop="dateModified" datetime="2022-04-08T08:37:25+00:00">2022-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -715,263 +965,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/12/07/mave%E4%B9%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%BE%E4%B8%8D%E5%88%B0%E6%88%91%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/12/05/%E6%B7%B1%E5%9C%B3%E5%85%89%E6%98%8E%E5%8C%BA%E8%B8%A9%E7%9B%98%E5%8F%82%E8%80%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
-      <meta itemprop="name" content="saber qin">
-      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dragon Fly in SKY">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dragonFlyInSky.GitHub.io/2021/12/05/%E6%B7%B1%E5%9C%B3%E5%85%89%E6%98%8E%E5%8C%BA%E8%B8%A9%E7%9B%98%E5%8F%82%E8%80%83/" class="post-title-link" itemprop="url">深圳光明区踩盘参考</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-05 20:42:03" itemprop="dateCreated datePublished" datetime="2021-12-05T20:42:03+00:00">2021-12-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/life/" itemprop="url" rel="index"><span itemprop="name">life</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天花了大半天的时间看了光明区的几个新盘：</p>
-<ol>
-<li>电建洺悦鹏渚</li>
-<li>安联颐景府</li>
-<li>星河天地5期</li>
-<li>中信凯旋君庭</li>
-<li>金茂公园里</li>
-<li>深铁瑞城（没看，了解了一下）</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/12/05/%E6%B7%B1%E5%9C%B3%E5%85%89%E6%98%8E%E5%8C%BA%E8%B8%A9%E7%9B%98%E5%8F%82%E8%80%83/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/11/26/MyBatis-Plus-%E4%BD%BF%E7%94%A8tips/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
-      <meta itemprop="name" content="saber qin">
-      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dragon Fly in SKY">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dragonFlyInSky.GitHub.io/2021/11/26/MyBatis-Plus-%E4%BD%BF%E7%94%A8tips/" class="post-title-link" itemprop="url">MyBatis-Plus 使用tips</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-11-26 23:51:45" itemprop="dateCreated datePublished" datetime="2021-11-26T23:51:45+00:00">2021-11-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/backend/" itemprop="url" rel="index"><span itemprop="name">backend</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>这两天刷知乎的时候，发现有这么一个问题：“你为什么不用mybtais-plus”，大致进去翻了一下发现自己使用mybatis-plus的姿势还有很多不正确的地方，于是打算再翻一遍mybatis-plus的介绍，想一下有什么东西是可以优化的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/11/26/MyBatis-Plus-%E4%BD%BF%E7%94%A8tips/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/11/09/%E5%B1%95%E7%A4%BAhexo-blog%E4%B8%AD%E6%89%80%E6%9C%89%E7%9A%84tags%E5%92%8Ccategories/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
-      <meta itemprop="name" content="saber qin">
-      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Dragon Fly in SKY">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/dragonFlyInSky.GitHub.io/2021/11/09/%E5%B1%95%E7%A4%BAhexo-blog%E4%B8%AD%E6%89%80%E6%9C%89%E7%9A%84tags%E5%92%8Ccategories/" class="post-title-link" itemprop="url">展示hexo blog中所有的tags和categories</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-11-09 17:31:12" itemprop="dateCreated datePublished" datetime="2021-11-09T17:31:12+00:00">2021-11-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-03 09:29:03" itemprop="dateModified" datetime="2022-03-03T09:29:03+00:00">2022-03-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/dragonFlyInSky.GitHub.io/categories/person%E2%80%94devlop/" itemprop="url" rel="index"><span itemprop="name">person—devlop</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近写blog感觉有一点好像很不方便：做为一个虚假的强迫症，总是希望自己所有blog的tags和categories更有条理，然而随着blog的越写越多（bushi）,记忆以前写的tag也越来越难，那么有没有一个方法可以帮助我快速回忆起来我以前都写过哪些tag和categories呢？</p>
-<p>这就是下个阶段的个人开发任务了：</p>
-<p>当前有这么几个思路：</p>
-<ol>
-<li>写个python之类的脚本，可以很轻松的parse到所有blog的关键字，但是就是展示问题不太好解决，写到一个文件里又显得有点low</li>
-<li>写个vscode插件，这毕竟是我最常用的文本编辑器了，可以在右边框显示，也可以做输入提醒，唯一的问题就是–看起来似乎有点难</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/dragonFlyInSky.GitHub.io/2021/11/09/%E5%B1%95%E7%A4%BAhexo-blog%E4%B8%AD%E6%89%80%E6%9C%89%E7%9A%84tags%E5%92%8Ccategories/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1060,7 +1053,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/dragonFlyInSky.GitHub.io/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1073,7 +1066,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/dragonFlyInSky.GitHub.io/tags/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

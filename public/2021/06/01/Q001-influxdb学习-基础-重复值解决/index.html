@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/dragonFlyInSky.GitHub.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/dragonFlyInSky.GitHub.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/dragonFlyInSky.GitHub.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/dragonFlyInSky.GitHub.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/dragonFlyInSky.GitHub.io/css/main.css">
+
+
+<link rel="stylesheet" href="/dragonFlyInSky.GitHub.io/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="为什么要写这篇文章呢？ 因为这两天想要走一个查询接口按照时间来查询记录去插入到influxdb里边，但是考虑到程序运行时之类的问题，严格按照运行间隔来取时间查询肯定会存在漏掉记录的可能性，所以最好还是多查一段时间，然后再去掉重复值 思路呢，就按照这么来：  先复习一下influxdb的数据格式 看一下如何解决这个问题 其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Q001:influxdb学习-基础&amp;重复值解决">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/06/01/Q001-influxdb%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80-%E9%87%8D%E5%A4%8D%E5%80%BC%E8%A7%A3%E5%86%B3/index.html">
+<meta property="og:site_name" content="Dragon Fly in SKY">
+<meta property="og:description" content="为什么要写这篇文章呢？ 因为这两天想要走一个查询接口按照时间来查询记录去插入到influxdb里边，但是考虑到程序运行时之类的问题，严格按照运行间隔来取时间查询肯定会存在漏掉记录的可能性，所以最好还是多查一段时间，然后再去掉重复值 思路呢，就按照这么来：  先复习一下influxdb的数据格式 看一下如何解决这个问题 其他">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-01T18:51:17.000Z">
+<meta property="article:modified_time" content="2023-05-18T07:48:25.869Z">
+<meta property="article:author" content="saber qin">
+<meta property="article:tag" content="TICK">
+<meta property="article:tag" content="influxdb">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/06/01/Q001-influxdb%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80-%E9%87%8D%E5%A4%8D%E5%80%BC%E8%A7%A3%E5%86%B3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Q001:influxdb学习-基础&重复值解决 | Dragon Fly in SKY</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/dragonFlyInSky.GitHub.io/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dragon Fly in SKY</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">见龙在天</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/dragonFlyInSky.GitHub.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/dragonFlyInSky.GitHub.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/dragonFlyInSky.GitHub.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/dragonFlyInSky.GitHub.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/dragonFlyInSky.GitHub.io/plan/" rel="section"><i class="fa fa-calendar fa-fw"></i>计划</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/06/01/Q001-influxdb%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80-%E9%87%8D%E5%A4%8D%E5%80%BC%E8%A7%A3%E5%86%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Q001:influxdb学习-基础&重复值解决
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-01 18:51:17" itemprop="dateCreated datePublished" datetime="2021-06-01T18:51:17+00:00">2021-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-18 07:48:25" itemprop="dateModified" datetime="2023-05-18T07:48:25+00:00">2023-05-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/%E6%97%A5%E5%B8%B8%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" itemprop="url" rel="index"><span itemprop="name">日常问题解决</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>为什么要写这篇文章呢？</p>
+<p>因为这两天想要走一个查询接口按照时间来查询记录去插入到influxdb里边，但是考虑到程序运行时之类的问题，严格按照运行间隔来取时间查询肯定会存在漏掉记录的可能性，所以最好还是多查一段时间，然后再去掉重复值</p>
+<p>思路呢，就按照这么来：</p>
+<ol>
+<li>先复习一下influxdb的数据格式</li>
+<li>看一下如何解决这个问题</li>
+<li>其他</li>
+</ol>
+<a id="more"></a>
+
+<h2 id="influxdb的数据格式"><a href="#influxdb的数据格式" class="headerlink" title="influxdb的数据格式"></a>influxdb的数据格式</h2><p>这个很多<a target="_blank" rel="noopener" href="https://www.cnblogs.com/shhnwangjian/p/6897216.html">blog</a>里边都有，这里我大致重复一下</p>
+<p>influxdb里边可以将一条数据看为一个虚拟的key和其对应的value</p>
+<pre><code>cpu_usage,host=server01,region=us-west value=0.64 1434055562000000000
+</code></pre>
+<p>其中key包括以下部分</p>
+<ul>
+<li><p>database 数据库名，在influxdb中可以创建多个数据库，不同数据库的文件可以隔离存放</p>
+</li>
+<li><p>retention policy: 存储策略，用于设置数据保留的时间，每个数据库刚开始会自动创建一个默认的存储策略 autogen，数据保留时间为永久，之后用户可以自己设置，例如保留最近2小时的数据。插入和查询数据时如果不指定存储策略，则使用默认存储策略，且默认存储策略可以修改。InfluxDB 会定期清除过期的数据。</p>
+</li>
+<li><p>measurement: 测量指标名，例如 cpu_usage 表示 cpu 的使用率。</p>
+</li>
+<li><p>tag sets: tags 在 InfluxDB 中会按照字典序排序，不管是 tagk 还是 tagv，只要不一致就分别属于两个 key，例如 host=server01,region=us-west 和 host=server02,region=us-west 就是两个不同的 tag set。</p>
+</li>
+<li><p>tag–标签，在InfluxDB中，tag是一个非常重要的部分，表名+tag一起作为数据库的索引，是“key-value”的形式。</p>
+</li>
+<li><p>field name: 例如上面数据中的 value 就是 fieldName，InfluxDB 中支持一条数据中插入多个 fieldName，这其实是一个语法上的优化，在实际的底层存储中，是当作多条数据来存储。</p>
+</li>
+<li><p>timestamp: 每一条数据都需要指定一个时间戳，在 TSM 存储引擎中会特殊对待，以为了优化后续的查询操作。 </p>
+</li>
+</ul>
+<p>tag + field + field 合起来就是point，可以简单理解为：</p>
+<ol>
+<li>tags是有索引的属性</li>
+<li>time是主索引，存储进去的时间</li>
+<li>fields是数据，没有索引的属性</li>
+</ol>
+<h2 id="如何应对重复值？"><a href="#如何应对重复值？" class="headerlink" title="如何应对重复值？"></a>如何应对重复值？</h2><p>一般插入的时候不会写time，但是time+用户自定义的tag 才是完整的tag，而tag又是用来做索引的，这里我们就可以考虑一下：完全一样的tag能不能插入呢？</p>
+<p>做以下测试：</p>
+<p>先进入influxdb的命令行界面，插入以下三条一样的数据：</p>
+<pre><code>INSERT dupltest,host=serverA,region=us_west value=0.64 1623146232869000000
+INSERT dupltest,host=serverA,region=us_west value=0.64 1623146232869000000
+INSERT dupltest,host=serverA,region=us_west value=0.64 1623146232869000000
+                                
+</code></pre>
+<p>然后再查询一下：</p>
+<pre><code>name: dupltest
+time                host    region  value
+----                ----    ------  -----
+1623146232869000000 serverA us_west 0.64
+</code></pre>
+<p>果然不能重复插入。到这里问题就解决了：只要tags完全一样，就不会重复插入。</p>
+<p>那考虑其他的情况：如果time是自动生成的话要怎么办呢？这样就不能通过依赖重复tag来剔除掉重复数据了。</p>
+<p>可以考虑一下自己插入一个时间数据，然后查询的时候查询最后一个时间，如果时间小于这个最后时间，就不插入。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/dragonFlyInSky.GitHub.io/tags/TICK/" rel="tag"># TICK</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/influxdb/" rel="tag"># influxdb</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/05/26/WSL2%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/" rel="prev" title="WSL2使用问题记录">
+      <i class="fa fa-chevron-left"></i> WSL2使用问题记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/06/10/Q003-influxdb%E4%B8%AD%E7%9A%84%E5%AD%98%E5%82%A8%E7%AD%96%E7%95%A5/" rel="next" title="Q003:influxdb中的存储策略&存储相关">
+      Q003:influxdb中的存储策略&存储相关 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#influxdb%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">influxdb的数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9%E9%87%8D%E5%A4%8D%E5%80%BC%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">如何应对重复值？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">saber qin</p>
+  <div class="site-description" itemprop="description">愿我内心之龙可在天空翱翔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/dragonFlyInSky.GitHub.io/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/dragonFlyInSky.GitHub.io/categories/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/dragonFlyInSky.GitHub.io/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jiahui-qin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jiahui-qin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feverqjh@outlook.com" title="E-Mail → mailto:feverqjh@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">saber qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/dragonFlyInSky.GitHub.io/lib/anime.min.js"></script>
+  <script src="/dragonFlyInSky.GitHub.io/lib/velocity/velocity.min.js"></script>
+  <script src="/dragonFlyInSky.GitHub.io/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/dragonFlyInSky.GitHub.io/js/utils.js"></script>
+
+<script src="/dragonFlyInSky.GitHub.io/js/motion.js"></script>
+
+
+<script src="/dragonFlyInSky.GitHub.io/js/schemes/pisces.js"></script>
+
+
+<script src="/dragonFlyInSky.GitHub.io/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/dragonFlyInSky.GitHub.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/dragonFlyInSky.GitHub.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/dragonFlyInSky.GitHub.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/dragonFlyInSky.GitHub.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/dragonFlyInSky.GitHub.io/css/main.css">
+
+
+<link rel="stylesheet" href="/dragonFlyInSky.GitHub.io/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="今天同事问了我一个问题：为啥找不到项目里边的一个依赖，这个项目我也是刚刚接手，然而我可以正常运行。最开始觉得有点幼稚，依赖都是在远程仓库里边下载下来的，这么可能找不到呢？ 于是我也试着分析了一下： 找不到的依赖是一个叫做telnet-client的jar包，在aliyun的仓库搜索了一下，确实没有找到telnet-client这个包。翻了翻程序，程序里边import的是org.apache.com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mave之为什么找不到我要的依赖">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/12/07/mave%E4%B9%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%BE%E4%B8%8D%E5%88%B0%E6%88%91%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96/index.html">
+<meta property="og:site_name" content="Dragon Fly in SKY">
+<meta property="og:description" content="今天同事问了我一个问题：为啥找不到项目里边的一个依赖，这个项目我也是刚刚接手，然而我可以正常运行。最开始觉得有点幼稚，依赖都是在远程仓库里边下载下来的，这么可能找不到呢？ 于是我也试着分析了一下： 找不到的依赖是一个叫做telnet-client的jar包，在aliyun的仓库搜索了一下，确实没有找到telnet-client这个包。翻了翻程序，程序里边import的是org.apache.com">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jiahui-qin.github.io/images/2021-12-7/mvn_life.png">
+<meta property="article:published_time" content="2021-12-07T21:03:06.000Z">
+<meta property="article:modified_time" content="2023-05-18T07:48:25.869Z">
+<meta property="article:author" content="saber qin">
+<meta property="article:tag" content="maven">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jiahui-qin.github.io/images/2021-12-7/mvn_life.png">
+
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/12/07/mave%E4%B9%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%BE%E4%B8%8D%E5%88%B0%E6%88%91%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mave之为什么找不到我要的依赖 | Dragon Fly in SKY</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/dragonFlyInSky.GitHub.io/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dragon Fly in SKY</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">见龙在天</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/dragonFlyInSky.GitHub.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/dragonFlyInSky.GitHub.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/dragonFlyInSky.GitHub.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/dragonFlyInSky.GitHub.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/dragonFlyInSky.GitHub.io/plan/" rel="section"><i class="fa fa-calendar fa-fw"></i>计划</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/12/07/mave%E4%B9%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%BE%E4%B8%8D%E5%88%B0%E6%88%91%E8%A6%81%E7%9A%84%E4%BE%9D%E8%B5%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mave之为什么找不到我要的依赖
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-12-07 21:03:06" itemprop="dateCreated datePublished" datetime="2021-12-07T21:03:06+00:00">2021-12-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-18 07:48:25" itemprop="dateModified" datetime="2023-05-18T07:48:25+00:00">2023-05-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/develop/" itemprop="url" rel="index"><span itemprop="name">develop</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>今天同事问了我一个问题：为啥找不到项目里边的一个依赖，这个项目我也是刚刚接手，然而我可以正常运行。最开始觉得有点幼稚，依赖都是在远程仓库里边下载下来的，这么可能找不到呢？</p>
+<p>于是我也试着分析了一下：</p>
+<p>找不到的依赖是一个叫做<code>telnet-client</code>的jar包，在<a target="_blank" rel="noopener" href="https://developer.aliyun.com/mvn/searchs">aliyun的仓库</a>搜索了一下，确实没有找到telnet-client这个包。翻了翻程序，程序里边import的是<code>org.apache.commons.net.examples.telnet.client</code>，看到这里我就误以为这里的telnet.client就是我要找的包<code>telnet-client</code>,于是一顿找，发现怎么都不对劲。</p>
+<a id="more"></a>
+
+<p>过了会，同时告诉说，发现删掉<code>telnet-client</code>这个依赖，用<code>commons-net</code>来替换也可以正常运行，我就去看了一下<code>commons-net</code>的代码，发现里边是有这个telnet-client这个类，于是我就误以为maven可以直接引用一个jar包里的一个类。就这么成功的和同事糊弄了过去。</p>
+<p>后来怎么想怎么不对劲：一个类哪里来的版本号？这个<code>telnet-client</code>必然应该是个jar包嘛。这么看的话，程序里import进来的<code>telnet.client</code>确实是<code>commons-net</code>的一个类，那为什么会用到这个呢··那就应该是因为<code>commons-net</code>是<code>telnet-client</code>的依赖··所以被引入了进来。</p>
+<p>所以整理一下，程序里边调用的其实是pom里引入jar包的所依赖的jar包··</p>
+<p>其实归根结底，还是对maven不太熟悉，那就趁着这个机会，学习一下maven、版本管理相关的知识？</p>
+<h2 id="maven的生命周期："><a href="#maven的生命周期：" class="headerlink" title="maven的生命周期："></a>maven的生命周期：</h2><p><img src="/images/2021-12-7/mvn_life.png"></p>
+<p>不过maven实际上并不是只有这几个生命周期，实际上还有很多很多···</p>
+<h2 id="maven的仓库"><a href="#maven的仓库" class="headerlink" title="maven的仓库"></a>maven的仓库</h2><p>maven会默认在用户目录下创建一个<code>.m2/repository</code>的仓库目录。运行maven的时候，所有的依赖都要在本地仓库获取，本地没有的就从远程仓库拉取</p>
+<p>maven的搜索顺序是： 本地仓库 -&gt; 中央仓库  -&gt; 远程仓库（如果有设置）-&gt;  结束或者抛出未找到的错误</p>
+<p>中央仓库是在settings.xml中设置的，可以设置aliyun的镜像节点， 如果想要添加远程仓库的话，则在项目的pom文件里添加repositories-repositories节点</p>
+<h2 id="maven的依赖传递"><a href="#maven的依赖传递" class="headerlink" title="maven的依赖传递"></a>maven的依赖传递</h2><p>这个感觉是比较核心的内容：我们写的小项目都动辄十几个依赖，每个依赖又都有自己的依赖··要是人手工管理岂不是给干晕过去了··</p>
+<ol>
+<li>子模块可以通过继承获得父模块中声明的全部依赖</li>
+<li>exclusion可以用来排除不需要传递的依赖</li>
+<li>两条依赖路径上存在不同版本的话，先选择路径短的，再选择先声明的版本。</li>
+</ol>
+<hr>
+<p>今天上班看了一下，发现昨天的猜测确实没错。</p>
+<p>pom里引入了一个远程仓库：<code>https://clojars.org/repo/</code>, 然后在这个远程仓库里边下载的<code>telnet-client</code>，翻一下<code>telnet-client</code>的pom依赖，里边确实有<code>commons-net</code>这个依赖。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/dragonFlyInSky.GitHub.io/tags/maven/" rel="tag"># maven</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/12/05/%E6%B7%B1%E5%9C%B3%E5%85%89%E6%98%8E%E5%8C%BA%E8%B8%A9%E7%9B%98%E5%8F%82%E8%80%83/" rel="prev" title="深圳光明区踩盘参考">
+      <i class="fa fa-chevron-left"></i> 深圳光明区踩盘参考
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/12/08/mysql%E5%92%8Credis%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" rel="next" title="mysql和redis中的数据一致性问题">
+      mysql和redis中的数据一致性问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#maven%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">maven的生命周期：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven%E7%9A%84%E4%BB%93%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">maven的仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven%E7%9A%84%E4%BE%9D%E8%B5%96%E4%BC%A0%E9%80%92"><span class="nav-number">3.</span> <span class="nav-text">maven的依赖传递</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">saber qin</p>
+  <div class="site-description" itemprop="description">愿我内心之龙可在天空翱翔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/dragonFlyInSky.GitHub.io/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/dragonFlyInSky.GitHub.io/categories/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/dragonFlyInSky.GitHub.io/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jiahui-qin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jiahui-qin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feverqjh@outlook.com" title="E-Mail → mailto:feverqjh@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">saber qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/dragonFlyInSky.GitHub.io/lib/anime.min.js"></script>
+  <script src="/dragonFlyInSky.GitHub.io/lib/velocity/velocity.min.js"></script>
+  <script src="/dragonFlyInSky.GitHub.io/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/dragonFlyInSky.GitHub.io/js/utils.js"></script>
+
+<script src="/dragonFlyInSky.GitHub.io/js/motion.js"></script>
+
+
+<script src="/dragonFlyInSky.GitHub.io/js/schemes/pisces.js"></script>
+
+
+<script src="/dragonFlyInSky.GitHub.io/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

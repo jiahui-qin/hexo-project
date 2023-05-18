@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/dragonFlyInSky.GitHub.io/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/dragonFlyInSky.GitHub.io/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/dragonFlyInSky.GitHub.io/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/dragonFlyInSky.GitHub.io/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/dragonFlyInSky.GitHub.io/css/main.css">
+
+
+<link rel="stylesheet" href="/dragonFlyInSky.GitHub.io/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jiahui-qin.github.io","root":"/dragonFlyInSky.GitHub.io/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="从上周觉得在go里边手写db.exec(select * from xxx) 非常痛苦之后，开始使用gorm这个框架，感觉确实很不错，但是可能是由于自己的见识还是不够广阔，导致踩了一些小坑，还留了一些问题··这里先记录一下： 什么是gormgorm可以类比到java的mybatsis，非常方便的orm操作框架，可以方便的操作数据库。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gorm使用踩坑">
+<meta property="og:url" content="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/07/gorm%E4%BD%BF%E7%94%A8%E8%B8%A9%E5%9D%91/index.html">
+<meta property="og:site_name" content="Dragon Fly in SKY">
+<meta property="og:description" content="从上周觉得在go里边手写db.exec(select * from xxx) 非常痛苦之后，开始使用gorm这个框架，感觉确实很不错，但是可能是由于自己的见识还是不够广阔，导致踩了一些小坑，还留了一些问题··这里先记录一下： 什么是gormgorm可以类比到java的mybatsis，非常方便的orm操作框架，可以方便的操作数据库。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-09-07T18:53:20.000Z">
+<meta property="article:modified_time" content="2023-05-18T07:48:25.869Z">
+<meta property="article:author" content="saber qin">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="gorm">
+<meta property="article:tag" content="selfund">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/07/gorm%E4%BD%BF%E7%94%A8%E8%B8%A9%E5%9D%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>gorm使用踩坑 | Dragon Fly in SKY</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/dragonFlyInSky.GitHub.io/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dragon Fly in SKY</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">见龙在天</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/dragonFlyInSky.GitHub.io/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/dragonFlyInSky.GitHub.io/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/dragonFlyInSky.GitHub.io/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/dragonFlyInSky.GitHub.io/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/dragonFlyInSky.GitHub.io/plan/" rel="section"><i class="fa fa-calendar fa-fw"></i>计划</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jiahui-qin.github.io/dragonFlyInSky.GitHub.io/2021/09/07/gorm%E4%BD%BF%E7%94%A8%E8%B8%A9%E5%9D%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/dragonFlyInSky.GitHub.io/images/avatar.gif">
+      <meta itemprop="name" content="saber qin">
+      <meta itemprop="description" content="愿我内心之龙可在天空翱翔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dragon Fly in SKY">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gorm使用踩坑
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-07 18:53:20" itemprop="dateCreated datePublished" datetime="2021-09-07T18:53:20+00:00">2021-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-18 07:48:25" itemprop="dateModified" datetime="2023-05-18T07:48:25+00:00">2023-05-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/dragonFlyInSky.GitHub.io/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>从上周觉得在go里边手写<code>db.exec(select * from xxx)</code> 非常痛苦之后，开始使用gorm这个框架，感觉确实很不错，但是可能是由于自己的见识还是不够广阔，导致踩了一些小坑，还留了一些问题··这里先记录一下：</p>
+<h2 id="什么是gorm"><a href="#什么是gorm" class="headerlink" title="什么是gorm"></a>什么是gorm</h2><p>gorm可以类比到java的mybatsis，非常方便的orm操作框架，可以方便的操作数据库。</p>
+<a id="more"></a>
+
+<h2 id="怎么使用"><a href="#怎么使用" class="headerlink" title="怎么使用"></a>怎么使用</h2><p><a target="_blank" rel="noopener" href="https://learnku.com/docs/gorm/v2">官方教程</a>里边讲的已经非常详细了，我大致大致写一下流程</p>
+<h3 id="先建立数据库对应的struct，这个可以对应到spring里边的model"><a href="#先建立数据库对应的struct，这个可以对应到spring里边的model" class="headerlink" title="先建立数据库对应的struct，这个可以对应到spring里边的model"></a>先建立数据库对应的struct，这个可以对应到spring里边的model</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">	gorm.Model</span><br><span class="line">	Name   <span class="keyword">string</span> <span class="string">`gorm:&quot;column:name; unique&quot; db:&quot;name&quot; json:&quot;name&quot; form:&quot;name&quot;`</span> </span><br><span class="line">	Desc   <span class="keyword">string</span> <span class="string">`gorm:&quot;column:desc&quot; db:&quot;desc&quot; json:&quot;desc&quot; form:&quot;desc&quot;`</span>         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这就是个非常普通的model，接下来我们挨个看：</p>
+<ul>
+<li><p>这个struct的名字是user， 可以用<code>db.AutoMigrate(&amp;User&#123;&#125;)</code>来检查表和struct是否匹配，如果这个表不存在，就会以struct的名字的复数形式来自动建表，比如这个结构自动建表的表名就是<strong>users</strong>，当然如果不想用这个表名的话，也可以手动指定其他的表名。</p>
+</li>
+<li><p>gorm.Model是内嵌了一个结构体，这个结构体里边包括id、创建时间、修改时间、删除时间。我们亦可以内嵌其他的结构体进来。</p>
+</li>
+<li><p>每个属性后边的描述体<code>gorm:&quot;column:name; unique&quot; db:&quot;name&quot; json:&quot;name&quot; form:&quot;name&quot;</code>在gorm这个里边可以指定列名、列是否是主键、是否是索引等····这里没有指定主键是因为grom.Model里边的id为默认主键。</p>
+</li>
+</ul>
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getConn</span><span class="params">()</span> <span class="params">(*gorm.DB, error)</span></span> &#123;</span><br><span class="line">	dsn := <span class="string">&quot;root:123456@tcp(localhost:3306)/fund?charset=utf8mb4&amp;parseTime=True&amp;loc=Local&quot;</span></span><br><span class="line">	db, error := gorm.Open(mysql.Open(dsn), &amp;gorm.Config&#123;&#125;)</span><br><span class="line">	sqlDB, _ := db.DB()</span><br><span class="line">	<span class="comment">// SetMaxIdleConns 设置空闲连接池中连接的最大数量</span></span><br><span class="line">	sqlDB.SetMaxIdleConns(<span class="number">10</span>)</span><br><span class="line">	<span class="comment">// SetMaxOpenConns 设置打开数据库连接的最大数量。</span></span><br><span class="line">	sqlDB.SetMaxOpenConns(<span class="number">100</span>)</span><br><span class="line">	<span class="comment">// SetConnMaxLifetime 设置了连接可复用的最大时间。</span></span><br><span class="line">	sqlDB.SetConnMaxLifetime(time.Hour)</span><br><span class="line">	<span class="keyword">return</span> db, error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他的函数直接调用<code>getConn()</code>获取db就可以了。</p>
+<h3 id="CRUD-Methods"><a href="#CRUD-Methods" class="headerlink" title="CRUD Methods"></a>CRUD Methods</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新增</span></span><br><span class="line">user := &amp;User&#123;Name: name, Desc: desc&#125;</span><br><span class="line">db.Debug().Create(user)</span><br><span class="line"></span><br><span class="line"><span class="comment">//查询</span></span><br><span class="line"><span class="keyword">var</span> user_in User</span><br><span class="line">db.Debug().Where(user).First(&amp;user_in)</span><br></pre></td></tr></table></figure>
+<p>为啥明明是最重要的却只写了这么点？因为这块网上资料最多似乎没必要看我的···</p>
+<p>但是这块我有个问题··先记录一下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以id作为冲突键，如果有冲突的话什么都不做</span></span><br><span class="line">db.Clauses(clause.OnConflict&#123;DoNothing: <span class="literal">true</span>&#125;).Create(&amp;user)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 以其他字段作为主键，如果冲突的话do nothing</span></span><br><span class="line">db.Clauses(clause.OnConflict&#123;</span><br><span class="line">	Columns:   []clause.Column&#123;&#123;Name: <span class="string">&quot;name&quot;</span>&#125;&#125;,DoNothing: <span class="literal">true</span>&#125;).Create(&amp;user)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我想要做Upsert，用name来检查冲突，如果有冲突的话do nothing，在上边代码的第二段里边指定了name，可以看生成的sql还是用的是id···不知道有没有大佬知道要怎么搞</p>
+<hr>
+<p>其他好像没啥了，想起来、遇到了再补充</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/dragonFlyInSky.GitHub.io/tags/go/" rel="tag"># go</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/gorm/" rel="tag"># gorm</a>
+              <a href="/dragonFlyInSky.GitHub.io/tags/selfund/" rel="tag"># selfund</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/09/02/%E5%AF%B9%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E5%8D%B0%E8%B1%A1/" rel="prev" title="对高可用的第一印象">
+      <i class="fa fa-chevron-left"></i> 对高可用的第一印象
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/dragonFlyInSky.GitHub.io/2021/09/08/go%E4%B8%AD%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" rel="next" title="gin中的错误处理">
+      gin中的错误处理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFgorm"><span class="nav-number">1.</span> <span class="nav-text">什么是gorm</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">怎么使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%BB%BA%E7%AB%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E5%BA%94%E7%9A%84struct%EF%BC%8C%E8%BF%99%E4%B8%AA%E5%8F%AF%E4%BB%A5%E5%AF%B9%E5%BA%94%E5%88%B0spring%E9%87%8C%E8%BE%B9%E7%9A%84model"><span class="nav-number">2.1.</span> <span class="nav-text">先建立数据库对应的struct，这个可以对应到spring里边的model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">2.2.</span> <span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CRUD-Methods"><span class="nav-number">2.3.</span> <span class="nav-text">CRUD Methods</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">saber qin</p>
+  <div class="site-description" itemprop="description">愿我内心之龙可在天空翱翔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/dragonFlyInSky.GitHub.io/archives/">
+        
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/dragonFlyInSky.GitHub.io/categories/">
+          
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/dragonFlyInSky.GitHub.io/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jiahui-qin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jiahui-qin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:feverqjh@outlook.com" title="E-Mail → mailto:feverqjh@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">saber qin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/dragonFlyInSky.GitHub.io/lib/anime.min.js"></script>
+  <script src="/dragonFlyInSky.GitHub.io/lib/velocity/velocity.min.js"></script>
+  <script src="/dragonFlyInSky.GitHub.io/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/dragonFlyInSky.GitHub.io/js/utils.js"></script>
+
+<script src="/dragonFlyInSky.GitHub.io/js/motion.js"></script>
+
+
+<script src="/dragonFlyInSky.GitHub.io/js/schemes/pisces.js"></script>
+
+
+<script src="/dragonFlyInSky.GitHub.io/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
